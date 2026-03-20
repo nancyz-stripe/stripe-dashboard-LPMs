@@ -12,8 +12,8 @@ export default function App() {
         {prototypes.map((p) => (
           <Route
             key={p.id}
-            path={`${p.id}/*`}
-            element={<p.component basePath={`/${p.id}`} />}
+            path={`${p.path}/*`}
+            element={<p.component basePath={`/${p.path}`} />}
           />
         ))}
         <Route path="/" element={<PrototypeList prototypes={prototypes} />} />

@@ -312,7 +312,7 @@ export default function PrototypeList({ prototypes }) {
               {prototypes.map((p) => (
                 <tr
                   key={p.id}
-                  onClick={() => navigate(`/${p.id}`)}
+                  onClick={() => navigate(`/${p.path}`)}
                   className="border-b last:border-b-0 border-border hover:bg-offset transition-colors duration-100 cursor-pointer"
                 >
                   <td className="py-4 px-4 w-1 whitespace-nowrap">

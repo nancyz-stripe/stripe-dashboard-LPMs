@@ -13,6 +13,7 @@
   "prototype3": {
     "name": "AI-cation",
     "description": "Contextualizing batch LPM enablement based on what we previously explored with Markets.",
-    "status": "active"
+    "status": "active",
+    "path": "regional"
   }
 }

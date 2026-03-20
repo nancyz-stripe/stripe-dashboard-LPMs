@@ -8,6 +8,7 @@ const prototypes = Object.entries(modules).map(([path, importFn]) => {
   const meta = config[id] || {};
   return {
     id,
+    path: meta.path || id,
     name: meta.name || id,
     description: meta.description || '',
     status: meta.status || 'active',
