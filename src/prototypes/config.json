@@ -9,5 +9,10 @@
     "name": "Docs",
     "description": "Prototype Stripe docs pages using Markdoc",
     "status": "active"
+  },
+  "prototype3": {
+    "name": "AI-cation",
+    "description": "Contextualizing batch LPM enablement based on what we previously explored with Markets.",
+    "status": "active"
   }
 }
