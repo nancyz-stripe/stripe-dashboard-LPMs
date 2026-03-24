@@ -15,5 +15,10 @@
     "description": "Contextualizing batch LPM enablement based on what we previously explored with Markets.",
     "status": "active",
     "path": "regional"
+  },
+  "prototype4": {
+    "name": "Billing retries",
+    "description": "Retry settings for Direct debits and other LPMs",
+    "status": "active"
   }
 }
