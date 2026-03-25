@@ -138,8 +138,77 @@ function CustomRetryControls({ maxRetries, options = CUSTOM_RETRY_DAY_OPTIONS })
   );
 }
 
-function AccordionItem({ name, subtitle, enabled, expanded: defaultExpanded, children }) {
+function Spinner() {
+  return (
+    <svg className="animate-spin size-4" viewBox="0 0 16 16" fill="none">
+      <circle cx="8" cy="8" r="6" stroke="currentColor" strokeOpacity="0.2" strokeWidth="2" />
+      <path d="M14 8a6 6 0 0 0-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function OverflowMenu({ onDisable }) {
+  const [open, setOpen] = useState(false);
+  const wrapRef = useRef(null);
+  const [pos, setPos] = useState(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const rect = wrapRef.current.getBoundingClientRect();
+    setPos({ top: rect.bottom + 4, left: rect.right });
+
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = prevOverflow; };
+  }, [open]);
+
+  return (
+    <>
+      <div ref={wrapRef} className="inline-flex">
+        <Button
+          variant="secondary"
+          size="sm"
+          onClick={(e) => { e.stopPropagation(); setOpen(!open); }}
+        >
+          <Icon name="more" size="xxsmall" fill="currentColor" />
+        </Button>
+      </div>
+      {open && pos && createPortal(
+        <>
+          <div className="fixed inset-0 z-[199]" onClick={() => setOpen(false)} />
+          <div
+            className="fixed z-[200] bg-surface border border-border rounded-lg shadow-lg overflow-hidden"
+            style={{ top: pos.top, right: document.documentElement.clientWidth - pos.left }}
+          >
+            <div className="p-1">
+              <button
+                onClick={(e) => { e.stopPropagation(); setOpen(false); onDisable(); }}
+                className="flex items-center w-full px-2.5 py-1.5 rounded text-label-medium text-default hover:bg-offset transition-colors cursor-pointer text-left whitespace-nowrap"
+              >
+                Disable
+              </button>
+            </div>
+          </div>
+        </>,
+        document.body
+      )}
+    </>
+  );
+}
+
+function AccordionItem({ name, subtitle, enabled: defaultEnabled, expanded: defaultExpanded, children }) {
   const [expanded, setExpanded] = useState(defaultExpanded || false);
+  const [status, setStatus] = useState(defaultEnabled ? 'enabled' : 'disabled'); // disabled | pending | enabled
+
+  const handleEnable = (e) => {
+    e.stopPropagation();
+    setStatus('pending');
+    setTimeout(() => setStatus('enabled'), 1200);
+  };
+
+  const handleDisable = () => {
+    setStatus('disabled');
+  };
 
   return (
     <div className="border-b border-border">
@@ -158,15 +227,15 @@ function AccordionItem({ name, subtitle, enabled, expanded: defaultExpanded, chi
           </p>
         </div>
         <div className="flex items-center gap-3 shrink-0">
-          {enabled ? (
+          {status === 'enabled' ? (
             <>
               <Badge variant="success">Enabled</Badge>
-              <Button variant="secondary" size="sm" onClick={(e) => e.stopPropagation()}>
-                <Icon name="more" size="xxsmall" fill="currentColor" />
-              </Button>
+              <OverflowMenu onDisable={handleDisable} />
             </>
           ) : (
-            <Button variant="secondary" size="sm" onClick={(e) => e.stopPropagation()}>Enable</Button>
+            <Button variant="secondary" size="sm" onClick={handleEnable} className="w-[72px] justify-center">
+              {status === 'pending' ? <Spinner /> : 'Enable'}
+            </Button>
           )}
         </div>
       </div>
