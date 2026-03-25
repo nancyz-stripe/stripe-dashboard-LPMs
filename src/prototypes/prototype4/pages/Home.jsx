@@ -54,7 +54,7 @@ function CustomRetryControls({ maxRetries }) {
     <div className="flex flex-col gap-2 pl-[22px]">
       {steps.map((step, index) => (
         <div key={index} className="flex items-center gap-2">
-          <span className="text-label-small text-subdued shrink-0">{ORDINALS[index]} Retry</span>
+          <span className="text-label-small text-subdued shrink-0">{ORDINALS[index]} retry</span>
           <SelectTrigger value={step} />
           <button
             onClick={() => removeStep(index)}
