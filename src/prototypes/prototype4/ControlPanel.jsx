@@ -8,15 +8,11 @@ import {
   PANEL_WIDTH,
   DropZone,
   useDragSnap,
-  InfoBanner,
-  ContextDialog,
 } from '../../sail/ControlPanel';
-import { Switch } from '../../sail';
 
-export default function ControlPanel({ darkMode, onToggleDarkMode, sandboxMode, onToggleSandboxMode }) {
+export default function ControlPanel({ version, onVersionChange }) {
   const navigate = useNavigate();
   const [minimized, setMinimized] = useState(false);
-  const [contextOpen, setContextOpen] = useState(false);
   const { side, dragging, settling, settlePos, dragPos, snapTarget, panelRef, onPointerDown, didDrag, restLeft, bottomOffset, bottomExpr } = useDragSnap();
 
   let style;
@@ -27,6 +23,11 @@ export default function ControlPanel({ darkMode, onToggleDarkMode, sandboxMode, 
   } else {
     style = { left: restLeft, right: 'auto', bottom: bottomExpr };
   }
+
+  const versions = [
+    { key: 'v1', label: 'V1: Accordion' },
+    { key: 'v2', label: 'V2' },
+  ];
 
   return (
     <>
@@ -45,31 +46,27 @@ export default function ControlPanel({ darkMode, onToggleDarkMode, sandboxMode, 
           onToggle={() => { if (!didDrag.current) setMinimized(!minimized); }}
         />
         <ControlPanelBody minimized={minimized}>
-          <InfoBanner />
-          <Switch
-            checked={darkMode}
-            onChange={onToggleDarkMode}
-            label="Dark mode"
-            className="w-full"
-          />
-          <Switch
-            checked={sandboxMode}
-            onChange={onToggleSandboxMode}
-            label="Sandbox mode"
-            className="w-full"
-          />
-          <ControlPanelButton onClick={() => setContextOpen(true)}>
-            Show context
-          </ControlPanelButton>
+          <div className="flex flex-col gap-1">
+            <p className="text-label-small-emphasized text-subdued uppercase tracking-wider">Version</p>
+            {versions.map((v) => (
+              <button
+                key={v.key}
+                onClick={() => onVersionChange(v.key)}
+                className={`w-full text-left px-3 py-2 rounded-md text-label-medium cursor-pointer transition-colors ${
+                  version === v.key
+                    ? 'bg-brand/10 text-brand text-label-medium-emphasized'
+                    : 'text-default hover:bg-offset'
+                }`}
+              >
+                {v.label}
+              </button>
+            ))}
+          </div>
           <ControlPanelButton onClick={() => navigate('/')}>
             View all prototypes
           </ControlPanelButton>
         </ControlPanelBody>
       </div>
-
-      <ContextDialog open={contextOpen} onClose={() => setContextOpen(false)}>
-        {/* Add your prototype context here */}
-      </ContextDialog>
     </>
   );
 }

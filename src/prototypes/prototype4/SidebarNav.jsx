@@ -8,7 +8,7 @@ import { Icon } from '../../icons/SailIcons';
 export default function SidebarNav() {
   const location = useLocation();
   const basePath = useBasePath();
-  const [expandedSection, setExpandedSection] = useState('connect');
+  const [expandedSection, setExpandedSection] = useState('billing');
 
   const isActive = (path) => location.pathname === (path ? `${basePath}/${path}` : basePath || '/');
 
@@ -76,7 +76,7 @@ export default function SidebarNav() {
             <SubNavItem label="Subscriptions" />
             <SubNavItem label="Invoices" />
             <SubNavItem label="Usage-based" />
-            <SubNavItem label="Revenue recovery" />
+            <SubNavItem label="Revenue recovery" to="" active={isActive('')} />
           </ExpandableNavItem>
           <ExpandableNavItem
             icon={<Icon name="barChart" size="small" fill="currentColor" />}
