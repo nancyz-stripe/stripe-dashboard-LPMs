@@ -22,24 +22,15 @@ const CUSTOM_RETRY_DAY_OPTIONS = [
   'Retry 9 days after the previous attempt',
 ];
 
-function SelectMenu({ value, options, onChange }) {
+function SelectMenu({ value, options, onChange, className = '' }) {
   const [open, setOpen] = useState(false);
   const btnRef = useRef(null);
-  const menuRef = useRef(null);
   const [pos, setPos] = useState(null);
 
   useEffect(() => {
     if (!open) return;
     const rect = btnRef.current.getBoundingClientRect();
     setPos({ top: rect.bottom + 4, left: rect.left });
-
-    const handleClick = (e) => {
-      if (!menuRef.current?.contains(e.target) && !btnRef.current?.contains(e.target)) {
-        setOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClick);
-    return () => document.removeEventListener('mousedown', handleClick);
   }, [open]);
 
   return (
@@ -47,32 +38,35 @@ function SelectMenu({ value, options, onChange }) {
       <button
         ref={btnRef}
         onClick={() => setOpen(!open)}
-        className="inline-flex items-center gap-1.5 h-7 px-2 bg-surface border border-border rounded-md shadow-sm text-label-medium-emphasized text-default cursor-pointer hover:bg-offset transition-colors"
+        className={`inline-flex items-center gap-1.5 h-7 px-2 bg-surface border border-border rounded-md shadow-sm text-label-medium-emphasized text-default cursor-pointer hover:bg-offset transition-colors ${className}`}
       >
-        {value}
-        <Icon name="chevronDown" size="xxsmall" fill="currentColor" />
+        <span className="truncate">{value}</span>
+        <Icon name="chevronDown" size="xxsmall" fill="currentColor" className="shrink-0" />
       </button>
       {open && pos && createPortal(
-        <div
-          ref={menuRef}
-          className="fixed z-[200] bg-surface border border-border rounded-lg shadow-lg overflow-hidden"
-          style={{ top: pos.top, left: pos.left }}
-        >
-          <div className="p-1">
-            {options.map((option) => (
-              <button
-                key={option}
-                onClick={() => { onChange(option); setOpen(false); }}
-                className="flex items-center gap-1.5 w-full px-2.5 py-1.5 rounded text-label-medium text-default hover:bg-offset transition-colors cursor-pointer text-left"
-              >
-                <span className="flex-1">{option}</span>
-                {option === value && (
-                  <Icon name="checkCircleFilled" size="xxsmall" fill="currentColor" className="text-icon-default shrink-0" />
-                )}
-              </button>
-            ))}
+        <>
+          {/* Backdrop: blocks scroll and captures outside clicks */}
+          <div className="fixed inset-0 z-[199]" onClick={() => setOpen(false)} />
+          <div
+            className="fixed z-[200] bg-surface border border-border rounded-lg shadow-lg overflow-hidden"
+            style={{ top: pos.top, left: pos.left }}
+          >
+            <div className="p-1">
+              {options.map((option) => (
+                <button
+                  key={option}
+                  onClick={() => { onChange(option); setOpen(false); }}
+                  className="flex items-center gap-1.5 w-full px-2.5 py-1.5 rounded text-label-medium text-default hover:bg-offset transition-colors cursor-pointer text-left"
+                >
+                  <span className="flex-1">{option}</span>
+                  {option === value && (
+                    <Icon name="checkCircleFilled" size="xxsmall" fill="currentColor" className="text-icon-default shrink-0" />
+                  )}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>,
+        </>,
         document.body
       )}
     </>
@@ -111,18 +105,21 @@ function CustomRetryControls({ maxRetries, options = CUSTOM_RETRY_DAY_OPTIONS })
 
   return (
     <div className="flex flex-col gap-2 pl-[22px]">
-      {steps.map((step, index) => (
-        <div key={index} className="flex items-center gap-2">
-          <span className="text-label-small text-subdued shrink-0">{ORDINALS[index]} retry</span>
-          <SelectMenu value={step} options={options} onChange={(val) => updateStep(index, val)} />
-          <button
-            onClick={() => removeStep(index)}
-            className="flex items-center justify-center size-7 rounded-md hover:bg-offset transition-colors cursor-pointer shrink-0"
-          >
-            <Icon name="cancel" size="xxsmall" fill="currentColor" className="text-icon-subdued" />
-          </button>
-        </div>
-      ))}
+      <div className="grid grid-cols-[auto_1fr_auto] gap-x-2 gap-y-2 items-center">
+        {steps.map((step, index) => (
+          <>
+            <span key={`label-${index}`} className="text-label-small text-subdued whitespace-nowrap">{ORDINALS[index]} retry</span>
+            <SelectMenu key={`select-${index}`} value={step} options={options} onChange={(val) => updateStep(index, val)} className="w-full justify-between" />
+            <button
+              key={`remove-${index}`}
+              onClick={() => removeStep(index)}
+              className="flex items-center justify-center size-7 rounded-md hover:bg-offset transition-colors cursor-pointer"
+            >
+              <Icon name="cancel" size="xxsmall" fill="currentColor" className="text-icon-subdued" />
+            </button>
+          </>
+        ))}
+      </div>
       {steps.length < maxRetries && (
         <button
           onClick={addStep}
