@@ -31,6 +31,11 @@ function SelectMenu({ value, options, onChange, className = '' }) {
     if (!open) return;
     const rect = btnRef.current.getBoundingClientRect();
     setPos({ top: rect.bottom + 4, left: rect.left });
+
+    // Lock body scroll
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = prevOverflow; };
   }, [open]);
 
   return (
