@@ -233,7 +233,7 @@ function AccordionItem({ name, subtitle, enabled: defaultEnabled, expanded: defa
               <OverflowMenu onDisable={handleDisable} />
             </>
           ) : (
-            <Button variant="secondary" size="sm" onClick={handleEnable} className="w-[72px] justify-center">
+            <Button variant="secondary" size="sm" onClick={handleEnable}>
               {status === 'pending' ? <Spinner /> : 'Enable'}
             </Button>
           )}
