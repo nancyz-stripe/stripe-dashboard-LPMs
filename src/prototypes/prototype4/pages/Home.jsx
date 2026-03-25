@@ -305,50 +305,12 @@ function BankDebitRetryControls({ debit }) {
 }
 
 function BankDebitRetries() {
-  const [policy, setPolicy] = useState('automatic');
-  const [autoTimes, setAutoTimes] = useState('2 times');
-  const timesOptions = buildTimesOptions(2);
-
   return (
     <div>
       <div className="pr-8">
         <p className="text-label-medium-emphasized text-default">Bank debit retries</p>
       </div>
-
-      <div className="flex flex-col gap-3 mt-4">
-        <label className="flex items-center gap-2 cursor-pointer">
-          <Radio
-            name="bank-debit-retry-policy"
-            value="automatic"
-            checked={policy === 'automatic'}
-            onChange={() => setPolicy('automatic')}
-          />
-          <span className="text-label-medium-emphasized text-default">Use automatic retry schedule for subscriptions</span>
-        </label>
-
-        {policy === 'automatic' && (
-          <div className="flex items-center gap-2 pl-[22px]">
-            <span className="text-label-small text-subdued">Retry up to</span>
-            <SelectMenu value={autoTimes} options={timesOptions} onChange={setAutoTimes} />
-          </div>
-        )}
-
-        <label className="flex items-center gap-2 cursor-pointer">
-          <Radio
-            name="bank-debit-retry-policy"
-            value="custom"
-            checked={policy === 'custom'}
-            onChange={() => setPolicy('custom')}
-          />
-          <span className="text-label-medium-emphasized text-default">Use a custom retry schedule for subscriptions</span>
-        </label>
-
-        {policy === 'custom' && (
-          <CustomRetryControls maxRetries={2} />
-        )}
-      </div>
-
-      <div className="flex flex-col gap-2 mt-4">
+      <div className="flex flex-col gap-2 mt-2">
         {BANK_DEBITS.map((debit) => (
           <AccordionItem
             key={debit.id}
@@ -356,7 +318,9 @@ function BankDebitRetries() {
             subtitle={debit.retries}
             enabled={debit.enabled}
             expanded={debit.expanded}
-          />
+          >
+            <BankDebitRetryControls debit={debit} />
+          </AccordionItem>
         ))}
       </div>
     </div>
