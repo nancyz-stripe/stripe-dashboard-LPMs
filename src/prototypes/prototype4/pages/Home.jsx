@@ -29,6 +29,8 @@ function SelectTrigger({ value }) {
   );
 }
 
+const ORDINALS = ['1st', '2nd', '3rd', '4th', '5th', '6th', '7th', '8th'];
+
 function CustomRetryControls({ maxRetries }) {
   const [steps, setSteps] = useState(['1 day after the previous attempt']);
 
@@ -52,7 +54,7 @@ function CustomRetryControls({ maxRetries }) {
     <div className="flex flex-col gap-2 pl-[22px]">
       {steps.map((step, index) => (
         <div key={index} className="flex items-center gap-2">
-          <span className="text-label-small text-subdued shrink-0">Retry</span>
+          <span className="text-label-small text-subdued shrink-0">{ORDINALS[index]} Retry</span>
           <SelectTrigger value={step} />
           <button
             onClick={() => removeStep(index)}
