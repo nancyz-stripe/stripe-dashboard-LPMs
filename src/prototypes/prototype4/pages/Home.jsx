@@ -379,7 +379,7 @@ function BankDebitRetries() {
       <div className="pr-8">
         <p className="text-label-medium-emphasized text-default">Bank debit retries</p>
       </div>
-      <div className="flex flex-col gap-2 mt-2">
+      <div className="flex flex-col mt-2">
         {BANK_DEBITS.map((debit, index) => (
           <AccordionItem
             key={debit.id}
