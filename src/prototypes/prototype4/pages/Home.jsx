@@ -3,12 +3,21 @@ import { Tabs, Badge, Button, Radio, Tooltip } from '../../../sail';
 import { Icon } from '../../../icons/SailIcons';
 
 const BANK_DEBITS = [
-  { id: 'ach', name: 'ACH Direct Debit', retries: 'Up to 2 retries in total.', enabled: false },
-  { id: 'bacs', name: 'Bacs Direct Debit', retries: 'Up to 2 retries in total.', enabled: true },
-  { id: 'sepa', name: 'SEPA Direct Debit', retries: 'Up to 2 retries in total, minimum invoice amount 10 EUR.', enabled: true, expanded: true },
-  { id: 'pad', name: 'Pre-authorised debit in Canada', retries: 'Up to 2 retries in total.', enabled: false },
-  { id: 'au-becs', name: 'Australia BECS Direct Debit', retries: 'Up to 2 retries in total.', enabled: false },
-  { id: 'nz-becs', name: 'New Zealand BECS Direct Debit', retries: 'Up to 2 retries in total.', enabled: false },
+  { id: 'ach', name: 'ACH Direct Debit', retries: 'Up to 2 retries in total.', enabled: false, maxRetries: 2 },
+  { id: 'bacs', name: 'Bacs Direct Debit', retries: 'Up to 2 retries in total.', enabled: true, maxRetries: 2 },
+  { id: 'sepa', name: 'SEPA Direct Debit', retries: 'Up to 2 retries in total, minimum invoice amount 10 EUR.', enabled: true, expanded: true, maxRetries: 2 },
+  { id: 'pad', name: 'Pre-authorised debit in Canada', retries: 'Up to 2 retries in total.', enabled: false, maxRetries: 2 },
+  { id: 'au-becs', name: 'Australia BECS Direct Debit', retries: 'Up to 2 retries in total.', enabled: false, maxRetries: 2 },
+  { id: 'nz-becs', name: 'New Zealand BECS Direct Debit', retries: 'Up to 2 retries in total.', enabled: false, maxRetries: 2 },
+];
+
+const RETRY_DAY_OPTIONS = [
+  '1 day after the previous attempt',
+  '2 days after the previous attempt',
+  '3 days after the previous attempt',
+  '5 days after the previous attempt',
+  '7 days after the previous attempt',
+  '14 days after the previous attempt',
 ];
 
 function SelectTrigger({ value }) {
@@ -17,6 +26,52 @@ function SelectTrigger({ value }) {
       {value}
       <Icon name="chevronDown" size="xxsmall" fill="currentColor" />
     </button>
+  );
+}
+
+function CustomRetryControls({ maxRetries }) {
+  const [steps, setSteps] = useState(['1 day after the previous attempt']);
+
+  const addStep = () => {
+    if (steps.length < maxRetries) {
+      setSteps([...steps, '3 days after the previous attempt']);
+    }
+  };
+
+  const removeStep = (index) => {
+    setSteps(steps.filter((_, i) => i !== index));
+  };
+
+  const updateStep = (index, value) => {
+    const newSteps = [...steps];
+    newSteps[index] = value;
+    setSteps(newSteps);
+  };
+
+  return (
+    <div className="flex flex-col gap-2 pl-[22px]">
+      {steps.map((step, index) => (
+        <div key={index} className="flex items-center gap-2">
+          <span className="text-label-small text-subdued shrink-0">Retry</span>
+          <SelectTrigger value={step} />
+          <button
+            onClick={() => removeStep(index)}
+            className="flex items-center justify-center size-7 rounded-md hover:bg-offset transition-colors cursor-pointer shrink-0"
+          >
+            <Icon name="cancel" size="xxsmall" fill="currentColor" className="text-icon-subdued" />
+          </button>
+        </div>
+      ))}
+      {steps.length < maxRetries && (
+        <button
+          onClick={addStep}
+          className="flex items-center gap-1 text-label-medium text-brand hover:underline cursor-pointer w-fit"
+        >
+          <Icon name="add" size="xxsmall" fill="currentColor" />
+          Add retry
+        </button>
+      )}
+    </div>
   );
 }
 
@@ -72,15 +127,13 @@ function CardPaymentRetries() {
       <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-2">
           {/* Smart retry option */}
-          <label className="flex items-start gap-2 cursor-pointer">
-            <div className="pt-0.5">
-              <Radio
-                name="card-retry-policy"
-                value="smart"
-                checked={retryPolicy === 'smart'}
-                onChange={() => setRetryPolicy('smart')}
-              />
-            </div>
+          <label className="flex items-center gap-2 cursor-pointer">
+            <Radio
+              name="card-retry-policy"
+              value="smart"
+              checked={retryPolicy === 'smart'}
+              onChange={() => setRetryPolicy('smart')}
+            />
             <div className="flex items-center gap-2">
               <span className="text-label-medium-emphasized text-default">Use a Smart Retry policy for subscriptions</span>
               <Tooltip
@@ -107,15 +160,13 @@ function CardPaymentRetries() {
           )}
 
           {/* Custom retry option */}
-          <label className="flex items-start gap-2 cursor-pointer">
-            <div className="pt-0.5">
-              <Radio
-                name="card-retry-policy"
-                value="custom"
-                checked={retryPolicy === 'custom'}
-                onChange={() => setRetryPolicy('custom')}
-              />
-            </div>
+          <label className="flex items-center gap-2 cursor-pointer">
+            <Radio
+              name="card-retry-policy"
+              value="custom"
+              checked={retryPolicy === 'custom'}
+              onChange={() => setRetryPolicy('custom')}
+            />
             <div className="flex items-center gap-2">
               <span className="text-label-medium-emphasized text-default">Use a custom retry policy for subscriptions</span>
               <Tooltip
@@ -131,6 +182,10 @@ function CardPaymentRetries() {
               </Tooltip>
             </div>
           </label>
+
+          {retryPolicy === 'custom' && (
+            <CustomRetryControls maxRetries={3} />
+          )}
         </div>
       </div>
     </div>
@@ -157,15 +212,13 @@ function BankDebitRetries() {
             {debit.id === 'sepa' && (
               <div className="flex flex-col gap-4">
                 <div className="flex flex-col gap-3">
-                  <label className="flex items-start gap-2 cursor-pointer">
-                    <div className="pt-0.5">
-                      <Radio
-                        name="sepa-retry-policy"
-                        value="automatic"
-                        checked={sepaPolicy === 'automatic'}
-                        onChange={() => setSepaPolicy('automatic')}
-                      />
-                    </div>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <Radio
+                      name="sepa-retry-policy"
+                      value="automatic"
+                      checked={sepaPolicy === 'automatic'}
+                      onChange={() => setSepaPolicy('automatic')}
+                    />
                     <span className="text-label-medium-emphasized text-default">Use automatic retry schedule for subscriptions</span>
                   </label>
 
@@ -176,17 +229,19 @@ function BankDebitRetries() {
                     </div>
                   )}
 
-                  <label className="flex items-start gap-2 cursor-pointer">
-                    <div className="pt-0.5">
-                      <Radio
-                        name="sepa-retry-policy"
-                        value="custom"
-                        checked={sepaPolicy === 'custom'}
-                        onChange={() => setSepaPolicy('custom')}
-                      />
-                    </div>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <Radio
+                      name="sepa-retry-policy"
+                      value="custom"
+                      checked={sepaPolicy === 'custom'}
+                      onChange={() => setSepaPolicy('custom')}
+                    />
                     <span className="text-label-medium-emphasized text-default">Use a custom retry schedule for subscriptions</span>
                   </label>
+
+                  {sepaPolicy === 'custom' && (
+                    <CustomRetryControls maxRetries={2} />
+                  )}
                 </div>
               </div>
             )}
