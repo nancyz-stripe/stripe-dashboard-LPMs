@@ -105,11 +105,11 @@ function CustomRetryControls({ maxRetries, options = CUSTOM_RETRY_DAY_OPTIONS })
 
   return (
     <div className="flex flex-col gap-2 pl-[22px]">
-      <div className="grid grid-cols-[auto_1fr_auto] gap-x-2 gap-y-2 items-center">
+      <div className="grid grid-cols-[auto_auto_auto] gap-x-2 gap-y-2 items-center w-fit">
         {steps.map((step, index) => (
           <>
             <span key={`label-${index}`} className="text-label-small text-subdued whitespace-nowrap">{ORDINALS[index]} retry</span>
-            <SelectMenu key={`select-${index}`} value={step} options={options} onChange={(val) => updateStep(index, val)} className="w-full justify-between" />
+            <SelectMenu key={`select-${index}`} value={step} options={options} onChange={(val) => updateStep(index, val)} />
             <button
               key={`remove-${index}`}
               onClick={() => removeStep(index)}
