@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Tabs, Badge, Button, Radio } from '../../../sail';
+import { Tabs, Badge, Button, Radio, Tooltip } from '../../../sail';
 import { Icon } from '../../../icons/SailIcons';
 
 const BANK_DEBITS = [
@@ -83,7 +83,17 @@ function CardPaymentRetries() {
             </div>
             <div className="flex items-center gap-2">
               <span className="text-label-medium-emphasized text-default">Use a Smart Retry policy for subscriptions</span>
-              <Icon name="info" size="xxsmall" fill="currentColor" className="text-icon-subdued" />
+              <Tooltip
+                placement="bottom"
+                content={
+                  <span className="text-label-medium text-default">
+                    Retry failed payments at the optimal times, powered by Stripe's machine learning. Stripe's recommended default setting is up to 8 retries within 2 weeks.{' '}
+                    <a href="https://docs.stripe.com/invoicing/automatic-collection#smart-retries" target="_blank" className="text-brand hover:underline">Learn more</a>
+                  </span>
+                }
+              >
+                <Icon name="info" size="xxsmall" fill="currentColor" className="text-icon-subdued cursor-help" />
+              </Tooltip>
             </div>
           </label>
 
@@ -108,7 +118,17 @@ function CardPaymentRetries() {
             </div>
             <div className="flex items-center gap-2">
               <span className="text-label-medium-emphasized text-default">Use a custom retry policy for subscriptions</span>
-              <Icon name="info" size="xxsmall" fill="currentColor" className="text-icon-subdued" />
+              <Tooltip
+                placement="bottom"
+                content={
+                  <span className="text-label-medium text-default">
+                    Manually configure up to 3 steps to retry payments until they succeed.{' '}
+                    <a href="https://docs.stripe.com/billing/revenue-recovery" target="_blank" className="text-brand hover:underline">Learn more</a>
+                  </span>
+                }
+              >
+                <Icon name="info" size="xxsmall" fill="currentColor" className="text-icon-subdued cursor-help" />
+              </Tooltip>
             </div>
           </label>
         </div>
