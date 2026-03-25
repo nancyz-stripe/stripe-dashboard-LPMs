@@ -46,21 +46,23 @@ export default function ControlPanel({ version, onVersionChange }) {
           onToggle={() => { if (!didDrag.current) setMinimized(!minimized); }}
         />
         <ControlPanelBody minimized={minimized}>
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-1 flex-1">
             <p className="text-label-small-emphasized text-subdued uppercase tracking-wider">Version</p>
-            {versions.map((v) => (
-              <button
-                key={v.key}
-                onClick={() => onVersionChange(v.key)}
-                className={`w-full text-left px-3 py-2 rounded-md text-label-medium cursor-pointer transition-colors ${
-                  version === v.key
-                    ? 'bg-brand/10 text-brand text-label-medium-emphasized'
-                    : 'text-default hover:bg-offset'
-                }`}
-              >
-                {v.label}
-              </button>
-            ))}
+            <div className="flex flex-col gap-1 flex-1">
+              {versions.map((v) => (
+                <button
+                  key={v.key}
+                  onClick={() => onVersionChange(v.key)}
+                  className={`w-full text-left px-3 py-2 rounded-md text-label-medium cursor-pointer transition-colors ${
+                    version === v.key
+                      ? 'bg-brand/10 text-brand text-label-medium-emphasized'
+                      : 'text-default hover:bg-offset'
+                  }`}
+                >
+                  {v.label}
+                </button>
+              ))}
+            </div>
           </div>
           <ControlPanelButton onClick={() => navigate('/')}>
             View all prototypes
