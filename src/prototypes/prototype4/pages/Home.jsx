@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { Tabs, Badge, Button, Radio, Tooltip } from '../../../sail';
 import { Icon } from '../../../icons/SailIcons';
 
@@ -11,14 +12,72 @@ const BANK_DEBITS = [
   { id: 'nz-becs', name: 'New Zealand BECS Direct Debit', retries: 'Up to 2 retries in total.', enabled: false, maxRetries: 2 },
 ];
 
-const RETRY_DAY_OPTIONS = [
-  '1 day after the previous attempt',
-  '2 days after the previous attempt',
-  '3 days after the previous attempt',
-  '5 days after the previous attempt',
-  '7 days after the previous attempt',
-  '14 days after the previous attempt',
+const SMART_RETRY_TIMES = ['4 times', '8 times'];
+const SMART_RETRY_DURATIONS = ['1 week', '2 weeks', '3 weeks', '1 month', '2 months'];
+const CUSTOM_RETRY_DAY_OPTIONS = [
+  'Retry 2 days after the previous attempt',
+  'Retry 3 days after the previous attempt',
+  'Retry 5 days after the previous attempt',
+  'Retry 7 days after the previous attempt',
+  'Retry 9 days after the previous attempt',
 ];
+
+function SelectMenu({ value, options, onChange }) {
+  const [open, setOpen] = useState(false);
+  const btnRef = useRef(null);
+  const menuRef = useRef(null);
+  const [pos, setPos] = useState(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const rect = btnRef.current.getBoundingClientRect();
+    setPos({ top: rect.bottom + 4, left: rect.left });
+
+    const handleClick = (e) => {
+      if (!menuRef.current?.contains(e.target) && !btnRef.current?.contains(e.target)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, [open]);
+
+  return (
+    <>
+      <button
+        ref={btnRef}
+        onClick={() => setOpen(!open)}
+        className="inline-flex items-center gap-1.5 h-7 px-2 bg-surface border border-border rounded-md shadow-sm text-label-medium-emphasized text-default cursor-pointer hover:bg-offset transition-colors"
+      >
+        {value}
+        <Icon name="chevronDown" size="xxsmall" fill="currentColor" />
+      </button>
+      {open && pos && createPortal(
+        <div
+          ref={menuRef}
+          className="fixed z-[200] bg-surface border border-border rounded-lg shadow-lg overflow-hidden"
+          style={{ top: pos.top, left: pos.left }}
+        >
+          <div className="p-1">
+            {options.map((option) => (
+              <button
+                key={option}
+                onClick={() => { onChange(option); setOpen(false); }}
+                className="flex items-center gap-1.5 w-full px-2.5 py-1.5 rounded text-label-medium text-default hover:bg-offset transition-colors cursor-pointer text-left"
+              >
+                <span className="flex-1">{option}</span>
+                {option === value && (
+                  <Icon name="checkCircleFilled" size="xxsmall" fill="currentColor" className="text-icon-default shrink-0" />
+                )}
+              </button>
+            ))}
+          </div>
+        </div>,
+        document.body
+      )}
+    </>
+  );
+}
 
 function SelectTrigger({ value }) {
   return (
@@ -31,12 +90,12 @@ function SelectTrigger({ value }) {
 
 const ORDINALS = ['1st', '2nd', '3rd', '4th', '5th', '6th', '7th', '8th'];
 
-function CustomRetryControls({ maxRetries }) {
-  const [steps, setSteps] = useState(['1 day after the previous attempt']);
+function CustomRetryControls({ maxRetries, options = CUSTOM_RETRY_DAY_OPTIONS }) {
+  const [steps, setSteps] = useState([options[0]]);
 
   const addStep = () => {
     if (steps.length < maxRetries) {
-      setSteps([...steps, '3 days after the previous attempt']);
+      setSteps([...steps, options[1]]);
     }
   };
 
@@ -55,7 +114,7 @@ function CustomRetryControls({ maxRetries }) {
       {steps.map((step, index) => (
         <div key={index} className="flex items-center gap-2">
           <span className="text-label-small text-subdued shrink-0">{ORDINALS[index]} retry</span>
-          <SelectTrigger value={step} />
+          <SelectMenu value={step} options={options} onChange={(val) => updateStep(index, val)} />
           <button
             onClick={() => removeStep(index)}
             className="flex items-center justify-center size-7 rounded-md hover:bg-offset transition-colors cursor-pointer shrink-0"
@@ -120,6 +179,8 @@ function AccordionItem({ name, subtitle, enabled, expanded: defaultExpanded, chi
 
 function CardPaymentRetries() {
   const [retryPolicy, setRetryPolicy] = useState('smart');
+  const [smartTimes, setSmartTimes] = useState('8 times');
+  const [smartDuration, setSmartDuration] = useState('2 weeks');
 
   return (
     <div>
@@ -155,9 +216,9 @@ function CardPaymentRetries() {
           {retryPolicy === 'smart' && (
             <div className="flex items-center gap-2 pl-[22px]">
               <span className="text-label-small text-subdued">Retry up to</span>
-              <SelectTrigger value="8 times" />
+              <SelectMenu value={smartTimes} options={SMART_RETRY_TIMES} onChange={setSmartTimes} />
               <span className="text-label-small text-subdued">within</span>
-              <SelectTrigger value="2 weeks" />
+              <SelectMenu value={smartDuration} options={SMART_RETRY_DURATIONS} onChange={setSmartDuration} />
             </div>
           )}
 
@@ -194,9 +255,54 @@ function CardPaymentRetries() {
   );
 }
 
-function BankDebitRetries() {
-  const [sepaPolicy, setSepaPolicy] = useState('automatic');
+function buildTimesOptions(maxRetries) {
+  return Array.from({ length: maxRetries }, (_, i) => `${i + 1} time${i + 1 > 1 ? 's' : ''}`);
+}
 
+function BankDebitRetryControls({ debit }) {
+  const [policy, setPolicy] = useState('automatic');
+  const [autoTimes, setAutoTimes] = useState(`${debit.maxRetries} times`);
+  const timesOptions = buildTimesOptions(debit.maxRetries);
+
+  return (
+    <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-3">
+        <label className="flex items-center gap-2 cursor-pointer">
+          <Radio
+            name={`${debit.id}-retry-policy`}
+            value="automatic"
+            checked={policy === 'automatic'}
+            onChange={() => setPolicy('automatic')}
+          />
+          <span className="text-label-medium-emphasized text-default">Use automatic retry schedule for subscriptions</span>
+        </label>
+
+        {policy === 'automatic' && (
+          <div className="flex items-center gap-2 pl-[22px]">
+            <span className="text-label-small text-subdued">Retry up to</span>
+            <SelectMenu value={autoTimes} options={timesOptions} onChange={setAutoTimes} />
+          </div>
+        )}
+
+        <label className="flex items-center gap-2 cursor-pointer">
+          <Radio
+            name={`${debit.id}-retry-policy`}
+            value="custom"
+            checked={policy === 'custom'}
+            onChange={() => setPolicy('custom')}
+          />
+          <span className="text-label-medium-emphasized text-default">Use a custom retry schedule for subscriptions</span>
+        </label>
+
+        {policy === 'custom' && (
+          <CustomRetryControls maxRetries={debit.maxRetries} />
+        )}
+      </div>
+    </div>
+  );
+}
+
+function BankDebitRetries() {
   return (
     <div>
       <div className="pr-8">
@@ -211,42 +317,7 @@ function BankDebitRetries() {
             enabled={debit.enabled}
             expanded={debit.expanded}
           >
-            {debit.id === 'sepa' && (
-              <div className="flex flex-col gap-4">
-                <div className="flex flex-col gap-3">
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <Radio
-                      name="sepa-retry-policy"
-                      value="automatic"
-                      checked={sepaPolicy === 'automatic'}
-                      onChange={() => setSepaPolicy('automatic')}
-                    />
-                    <span className="text-label-medium-emphasized text-default">Use automatic retry schedule for subscriptions</span>
-                  </label>
-
-                  {sepaPolicy === 'automatic' && (
-                    <div className="flex items-center gap-2 pl-[22px]">
-                      <span className="text-label-small text-subdued">Retry up to</span>
-                      <SelectTrigger value="2 times" />
-                    </div>
-                  )}
-
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <Radio
-                      name="sepa-retry-policy"
-                      value="custom"
-                      checked={sepaPolicy === 'custom'}
-                      onChange={() => setSepaPolicy('custom')}
-                    />
-                    <span className="text-label-medium-emphasized text-default">Use a custom retry schedule for subscriptions</span>
-                  </label>
-
-                  {sepaPolicy === 'custom' && (
-                    <CustomRetryControls maxRetries={2} />
-                  )}
-                </div>
-              </div>
-            )}
+            <BankDebitRetryControls debit={debit} />
           </AccordionItem>
         ))}
       </div>
