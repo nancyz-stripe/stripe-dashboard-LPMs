@@ -196,7 +196,7 @@ function OverflowMenu({ onDisable }) {
   );
 }
 
-function AccordionItem({ name, subtitle, enabled: defaultEnabled, expanded: defaultExpanded, children }) {
+function AccordionItem({ name, subtitle, enabled: defaultEnabled, expanded: defaultExpanded, isLast, children }) {
   const [expanded, setExpanded] = useState(defaultExpanded || false);
   const [status, setStatus] = useState(defaultEnabled ? 'enabled' : 'disabled'); // disabled | pending | enabled
 
@@ -211,7 +211,7 @@ function AccordionItem({ name, subtitle, enabled: defaultEnabled, expanded: defa
   };
 
   return (
-    <div className="border-b border-border">
+    <div className={isLast ? '' : 'border-b border-border'}>
       <div
         className="flex items-center gap-3 p-3 cursor-pointer hover:bg-offset transition-colors"
         onClick={() => setExpanded(!expanded)}
@@ -240,7 +240,7 @@ function AccordionItem({ name, subtitle, enabled: defaultEnabled, expanded: defa
         </div>
       </div>
       {expanded && children && (
-        <div className="px-3 pt-3 pb-4">
+        <div className="px-3 py-3">
           {children}
         </div>
       )}
@@ -380,13 +380,14 @@ function BankDebitRetries() {
         <p className="text-label-medium-emphasized text-default">Bank debit retries</p>
       </div>
       <div className="flex flex-col gap-2 mt-2">
-        {BANK_DEBITS.map((debit) => (
+        {BANK_DEBITS.map((debit, index) => (
           <AccordionItem
             key={debit.id}
             name={debit.name}
             subtitle={debit.retries}
             enabled={debit.enabled}
             expanded={debit.expanded}
+            isLast={index === BANK_DEBITS.length - 1}
           >
             <BankDebitRetryControls debit={debit} />
           </AccordionItem>
