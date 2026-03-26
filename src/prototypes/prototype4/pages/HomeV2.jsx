@@ -232,13 +232,13 @@ function buildTimesOptions(maxRetries) {
 // Retry Config Panels (used in detail view)
 // ============================================================================
 
-function CardRetryConfig() {
+function CardRetryConfig({ disabled }) {
   const [retryPolicy, setRetryPolicy] = useState('smart');
   const [smartTimes, setSmartTimes] = useState('8 times');
   const [smartDuration, setSmartDuration] = useState('2 weeks');
 
   return (
-    <div className="bg-offset rounded-lg p-6">
+    <div className={`bg-offset rounded-lg p-6 ${disabled ? 'opacity-50 pointer-events-none' : ''}`}>
       <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-2">
           <label className="flex items-center gap-2 cursor-pointer">
@@ -305,13 +305,13 @@ function CardRetryConfig() {
   );
 }
 
-function BankDebitRetryConfig({ method }) {
+function BankDebitRetryConfig({ method, disabled }) {
   const [policy, setPolicy] = useState('automatic');
   const [autoTimes, setAutoTimes] = useState(`${method.maxRetries} times`);
   const timesOptions = buildTimesOptions(method.maxRetries);
 
   return (
-    <div className="bg-offset rounded-lg p-6">
+    <div className={`bg-offset rounded-lg p-6 ${disabled ? 'opacity-50 pointer-events-none' : ''}`}>
       <div className="flex flex-col gap-3">
         <label className="flex items-center gap-2 cursor-pointer">
           <Radio
@@ -454,9 +454,9 @@ function DetailPanel({ method, status, onClose, onEnable, onDisable }) {
 
       {/* Retry config */}
       {method.type === 'card' ? (
-        <CardRetryConfig />
+        <CardRetryConfig disabled={!isEnabled} />
       ) : (
-        <BankDebitRetryConfig method={method} />
+        <BankDebitRetryConfig method={method} disabled={!isEnabled} />
       )}
     </div>
   );
