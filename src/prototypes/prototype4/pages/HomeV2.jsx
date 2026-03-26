@@ -359,7 +359,7 @@ function PaymentMethodRow({ method, selected, onSelect, status, onEnable, onDisa
   return (
     <div
       onClick={() => onSelect(method.id)}
-      className={`flex items-center gap-3 px-3 py-2.5 cursor-pointer transition-colors relative ${
+      className={`flex items-center gap-3 px-6 py-2.5 cursor-pointer transition-colors relative ${
         selected
           ? 'bg-offset'
           : 'hover:bg-offset/50'
@@ -407,7 +407,7 @@ function DetailPanel({ method, status, onClose, onEnable, onDisable }) {
   const typeLabel = method.type === 'card' ? 'Card payment' : 'Bank debit';
 
   return (
-    <div className="flex flex-col gap-4 px-4 pt-4">
+    <div className="flex flex-col gap-4 px-6 pt-4">
       {/* Header */}
       <div className="flex flex-col">
         <div className="flex items-center justify-between">
@@ -577,7 +577,7 @@ export default function HomeV2() {
             {/* Left column — payment method list (60%) */}
             <div className="w-[60%] shrink-0 border-r border-border flex flex-col">
               {/* List header */}
-              <div className="flex items-center justify-between p-4 border-b border-border">
+              <div className="flex items-center justify-between px-6 py-4 border-b border-border">
                 <div className="flex flex-col gap-0.5">
                   <p className="text-heading-small text-default">Payment method retries</p>
                   <p className="text-label-small text-subdued">Configure how failed payments are retried for each payment method.</p>
