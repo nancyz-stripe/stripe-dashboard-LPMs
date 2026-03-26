@@ -26,7 +26,7 @@ export default function ControlPanel({ version, onVersionChange }) {
 
   const versions = [
     { key: 'v1', label: 'V1: Accordion' },
-    { key: 'v2', label: 'V2' },
+    { key: 'v2', label: 'V2: Split screen' },
   ];
 
   return (
