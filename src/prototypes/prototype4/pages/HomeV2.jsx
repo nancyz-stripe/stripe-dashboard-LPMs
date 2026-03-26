@@ -151,7 +151,7 @@ function Toast({ message, onDismiss }) {
   }, [onDismiss]);
 
   return createPortal(
-    <div className="fixed bottom-6 left-6 z-[300] flex items-center min-h-[44px] bg-[#273951] rounded-md shadow-[0px_15px_35px_0px_rgba(48,49,61,0.08),0px_5px_15px_0px_rgba(0,0,0,0.12)] overflow-hidden animate-[slideUp_0.25s_ease-out]">
+    <div className="fixed bottom-14 left-1/2 -translate-x-1/2 z-[300] flex items-center min-h-[44px] bg-[#273951] rounded-md shadow-[0px_15px_35px_0px_rgba(48,49,61,0.08),0px_5px_15px_0px_rgba(0,0,0,0.12)] overflow-hidden animate-[slideUp_0.25s_ease-out]">
       <div className="flex items-center px-4 py-2">
         <p className="text-label-medium text-white whitespace-nowrap">{message}</p>
       </div>
