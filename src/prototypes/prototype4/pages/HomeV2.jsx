@@ -385,7 +385,7 @@ function DetailPanel({ method, status, onClose }) {
   const typeLabel = method.type === 'card' ? 'Card payment' : 'Bank debit';
 
   return (
-    <div className="flex flex-col gap-4 px-4">
+    <div className="flex flex-col gap-4 px-4 pt-4">
       {/* Header */}
       <div className="flex flex-col">
         <div className="flex items-center justify-between">
