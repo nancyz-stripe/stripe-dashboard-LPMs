@@ -382,31 +382,29 @@ function DetailPanel({ method, status, onClose }) {
   }
 
   const isEnabled = status === 'enabled';
-  const typeLabel = method.type === 'card' ? 'Card payment retries' : 'Bank debit retries';
+  const typeLabel = method.type === 'card' ? 'Card payment' : 'Bank debit';
 
   return (
-    <div className="flex flex-col gap-5 p-5">
+    <div className="flex flex-col gap-4 px-4">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="flex items-center justify-center size-8 rounded bg-offset shrink-0">
-            <Icon name={method.icon} size="small" fill="currentColor" className="text-icon-subdued" />
-          </div>
+      <div className="flex flex-col">
+        <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="text-label-large-emphasized text-default">{method.name}</span>
+            <div className="flex items-center justify-center size-6 rounded-sm bg-offset shrink-0">
+              <Icon name={method.icon} size="small" fill="currentColor" className="text-icon-subdued" />
+            </div>
+            <span className="text-heading-large text-default">{method.name}</span>
             {isEnabled && <Badge variant="success">Enabled</Badge>}
           </div>
+          <button
+            onClick={onClose}
+            className="flex items-center justify-center size-7 rounded-md hover:bg-offset transition-colors cursor-pointer"
+          >
+            <Icon name="cancel" size="xsmall" fill="currentColor" className="text-icon-subdued" />
+          </button>
         </div>
-        <button
-          onClick={onClose}
-          className="flex items-center justify-center size-7 rounded-md hover:bg-offset transition-colors cursor-pointer"
-        >
-          <Icon name="cancel" size="xsmall" fill="currentColor" className="text-icon-subdued" />
-        </button>
+        <p className="text-label-large text-default">{typeLabel}</p>
       </div>
-
-      {/* Type */}
-      <p className="text-label-small text-subdued">{typeLabel}</p>
 
       {/* Disable button (if enabled) */}
       {isEnabled && (
@@ -415,15 +413,21 @@ function DetailPanel({ method, status, onClose }) {
         </Button>
       )}
 
+      {/* Choose retry schedule section */}
+      <div className="flex flex-col gap-2">
+        <p className="text-heading-small text-default">Choose retry schedule</p>
+        <p className="text-label-small text-subdued">
+          {method.subtitle}{' '}
+          <span className="text-brand cursor-pointer hover:underline">Learn more</span>
+        </p>
+      </div>
+
       {/* Retry config */}
       {method.type === 'card' ? (
         <CardRetryConfig />
       ) : (
         <BankDebitRetryConfig method={method} />
       )}
-
-      {/* Info text */}
-      <p className="text-label-small text-subdued">{method.subtitle}</p>
     </div>
   );
 }
