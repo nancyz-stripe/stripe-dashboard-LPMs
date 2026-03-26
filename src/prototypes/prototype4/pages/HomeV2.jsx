@@ -540,7 +540,10 @@ export default function HomeV2() {
             <div className="w-[60%] shrink-0 border-r border-border flex flex-col">
               {/* List header */}
               <div className="flex items-center justify-between p-4 border-b border-border">
-                <p className="text-label-medium-emphasized text-default">Payment method retries</p>
+                <div className="flex flex-col gap-0.5">
+                  <p className="text-label-medium-emphasized text-default">Payment method retries</p>
+                  <p className="text-label-small text-subdued">Configure how failed payments are retried for each payment method.</p>
+                </div>
                 {hasDisabled && (
                   <button
                     onClick={handleEnableAll}
