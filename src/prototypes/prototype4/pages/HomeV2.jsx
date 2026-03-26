@@ -415,7 +415,7 @@ function DetailPanel({ method, status, onClose, onEnable, onDisable }) {
             <div className="flex items-center justify-center size-6 rounded-sm bg-offset shrink-0">
               <Icon name={method.icon} size="small" fill="currentColor" className="text-icon-subdued" />
             </div>
-            <span className="text-heading-large text-default">{method.name}</span>
+            <span className="text-heading-small text-default">{method.name}</span>
             {isEnabled ? (
               <Badge variant="success">Enabled</Badge>
             ) : (
@@ -445,7 +445,7 @@ function DetailPanel({ method, status, onClose, onEnable, onDisable }) {
 
       {/* Choose retry schedule section */}
       <div className="flex flex-col gap-2">
-        <p className="text-heading-small text-default">Choose retry schedule</p>
+        <p className="text-label-medium-emphasized text-default">Choose retry schedule</p>
         <p className="text-label-small text-subdued">
           {method.subtitle}{' '}
           <span className="text-brand cursor-pointer hover:underline">Learn more</span>
@@ -470,7 +470,7 @@ function SubscriptionStatus() {
   return (
     <div className="flex-1 border border-border rounded-lg p-4">
       <div className="flex flex-col gap-2.5">
-        <p className="text-label-medium-emphasized text-default">Subscription status</p>
+        <p className="text-heading-small text-default">Subscription status</p>
         <div className="flex items-center gap-2.5">
           <span className="text-label-small text-subdued">If all retries for a payment fail,</span>
           <SelectTrigger value="cancel the subscription" />
@@ -484,7 +484,7 @@ function InvoiceStatus() {
   return (
     <div className="flex-1 border border-border rounded-lg p-4">
       <div className="flex flex-col gap-2.5">
-        <p className="text-label-medium-emphasized text-default">Invoice status</p>
+        <p className="text-heading-small text-default">Invoice status</p>
         <div className="flex items-center gap-2.5">
           <span className="text-label-small text-subdued">If all retries for a payment fail,</span>
           <SelectTrigger value="leave the invoice overdue" />
@@ -579,7 +579,7 @@ export default function HomeV2() {
               {/* List header */}
               <div className="flex items-center justify-between p-4 border-b border-border">
                 <div className="flex flex-col gap-0.5">
-                  <p className="text-label-medium-emphasized text-default">Payment method retries</p>
+                  <p className="text-heading-small text-default">Payment method retries</p>
                   <p className="text-label-small text-subdued">Configure how failed payments are retried for each payment method.</p>
                 </div>
                 {hasDisabled && (
