@@ -394,7 +394,7 @@ function PaymentMethodRow({ method, selected, onSelect, status, onEnable, onDisa
   );
 }
 
-function DetailPanel({ method, status, onClose }) {
+function DetailPanel({ method, status, onClose, onEnable, onDisable }) {
   if (!method) {
     return (
       <div className="flex items-center justify-center h-full text-subdued text-body-small p-6">
@@ -416,7 +416,11 @@ function DetailPanel({ method, status, onClose }) {
               <Icon name={method.icon} size="small" fill="currentColor" className="text-icon-subdued" />
             </div>
             <span className="text-heading-large text-default">{method.name}</span>
-            {isEnabled && <Badge variant="success">Enabled</Badge>}
+            {isEnabled ? (
+              <Badge variant="success">Enabled</Badge>
+            ) : (
+              <Badge>Disabled</Badge>
+            )}
           </div>
           <button
             onClick={onClose}
@@ -428,10 +432,14 @@ function DetailPanel({ method, status, onClose }) {
         <p className="text-label-large text-default">{typeLabel}</p>
       </div>
 
-      {/* Disable button (if enabled) */}
-      {isEnabled && (
-        <Button variant="secondary" className="w-full">
+      {/* Enable/Disable button */}
+      {isEnabled ? (
+        <Button variant="secondary" className="w-full" onClick={() => onDisable(method.id)}>
           Disable retries
+        </Button>
+      ) : (
+        <Button variant="primary" className="w-full" onClick={() => onEnable(method.id)}>
+          Enable retries
         </Button>
       )}
 
@@ -606,6 +614,8 @@ export default function HomeV2() {
                 method={selectedMethodData}
                 status={methodStatuses[selectedMethod]}
                 onClose={() => setSelectedMethod(null)}
+                onEnable={handleEnable}
+                onDisable={handleDisable}
               />
             </div>
           </div>
