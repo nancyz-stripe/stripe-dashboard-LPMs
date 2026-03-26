@@ -144,6 +144,28 @@ function CustomRetryControls({ maxRetries, options = CUSTOM_RETRY_DAY_OPTIONS })
   );
 }
 
+function Toast({ message, onDismiss }) {
+  useEffect(() => {
+    const timer = setTimeout(onDismiss, 4000);
+    return () => clearTimeout(timer);
+  }, [onDismiss]);
+
+  return createPortal(
+    <div className="fixed bottom-6 left-6 z-[300] flex items-center min-h-[44px] bg-[#273951] rounded-md shadow-[0px_15px_35px_0px_rgba(48,49,61,0.08),0px_5px_15px_0px_rgba(0,0,0,0.12)] overflow-hidden animate-[slideUp_0.25s_ease-out]">
+      <div className="flex items-center px-4 py-2">
+        <p className="text-label-medium text-white whitespace-nowrap">{message}</p>
+      </div>
+      <button
+        onClick={onDismiss}
+        className="flex items-center justify-center self-stretch w-[44px] shrink-0 border-l border-white/10 cursor-pointer hover:bg-white/5 transition-colors"
+      >
+        <Icon name="cancel" size="xxsmall" fill="white" />
+      </button>
+    </div>,
+    document.body
+  );
+}
+
 function Spinner() {
   return (
     <svg className="animate-spin size-4" viewBox="0 0 16 16" fill="none">
@@ -471,6 +493,7 @@ function InvoiceStatus() {
 export default function HomeV2() {
   const [activeTab, setActiveTab] = useState('retries');
   const [selectedMethod, setSelectedMethod] = useState('cards');
+  const [toast, setToast] = useState(null);
   const [methodStatuses, setMethodStatuses] = useState(() => {
     const initial = {};
     PAYMENT_METHODS.forEach((m) => {
@@ -486,15 +509,21 @@ export default function HomeV2() {
     { key: 'automations', label: 'Automations' },
   ];
 
+  const showToast = (msg) => setToast({ key: Date.now(), message: msg });
+
   const handleEnable = (id) => {
+    const name = PAYMENT_METHODS.find((m) => m.id === id)?.name;
     setMethodStatuses((prev) => ({ ...prev, [id]: 'pending' }));
     setTimeout(() => {
       setMethodStatuses((prev) => ({ ...prev, [id]: 'enabled' }));
+      showToast(`Billing retries for ${name} is enabled`);
     }, 1200);
   };
 
   const handleDisable = (id) => {
+    const name = PAYMENT_METHODS.find((m) => m.id === id)?.name;
     setMethodStatuses((prev) => ({ ...prev, [id]: 'disabled' }));
+    showToast(`Billing retries for ${name} is disabled`);
   };
 
   const handleEnableAll = () => {
@@ -505,6 +534,7 @@ export default function HomeV2() {
         setMethodStatuses((prev) => ({ ...prev, [m.id]: 'enabled' }));
       }, 1200);
     });
+    showToast('Billing retries for all payment methods are enabled');
   };
 
   const selectedMethodData = PAYMENT_METHODS.find((m) => m.id === selectedMethod);
@@ -590,6 +620,10 @@ export default function HomeV2() {
       )}
       {activeTab === 'automations' && (
         <div className="text-subdued text-body-small">Automations content would go here.</div>
+      )}
+
+      {toast && (
+        <Toast key={toast.key} message={toast.message} onDismiss={() => setToast(null)} />
       )}
     </div>
   );
