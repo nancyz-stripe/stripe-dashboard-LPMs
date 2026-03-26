@@ -534,9 +534,6 @@ export default function HomeV2() {
             <InvoiceStatus />
           </div>
 
-          {/* Divider */}
-          <div className="border-t border-border" />
-
           {/* Split screen: Payment method list + Detail panel */}
           <div className="flex border border-border rounded-lg overflow-hidden min-h-[500px]">
             {/* Left column — payment method list (60%) */}
