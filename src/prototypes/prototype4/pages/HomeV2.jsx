@@ -535,8 +535,8 @@ export default function HomeV2() {
 
           {/* Split screen: Payment method list + Detail panel */}
           <div className="flex border border-border rounded-lg overflow-hidden min-h-[500px]">
-            {/* Left column — payment method list */}
-            <div className="w-[340px] shrink-0 border-r border-border flex flex-col">
+            {/* Left column — payment method list (60%) */}
+            <div className="w-[60%] shrink-0 border-r border-border flex flex-col">
               {/* List header */}
               <div className="flex items-center justify-between p-4 border-b border-border">
                 <p className="text-label-medium-emphasized text-default">Payment method retries</p>
