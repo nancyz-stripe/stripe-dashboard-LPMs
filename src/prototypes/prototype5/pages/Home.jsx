@@ -158,7 +158,7 @@ export default function Home() {
         <thead>
           <tr className="border-b border-border">
             <th className="w-12 h-9 shrink-0" />
-            <th className="h-9 text-left pr-4" style={{ width: '19%' }}>
+            <th className="h-9 text-left pr-16" style={{ width: '22%' }}>
               <button
                 className="flex items-center gap-1 cursor-pointer select-none"
                 onClick={() => setSortAsc(!sortAsc)}
@@ -167,8 +167,8 @@ export default function Home() {
                 <Icon name="arrowUpDown" size="xsmall" className="text-icon-default" />
               </button>
             </th>
-            <th className="h-9 text-left pr-12" style={{ width: '13%' }} />
-            <th className="h-9 text-left pr-12" style={{ width: '18%' }}>
+            <th className="h-9 text-left pr-16" style={{ width: '13%' }} />
+            <th className="h-9 text-left pr-16" style={{ width: '18%' }}>
               <span className="text-heading-xsmall text-default">Type</span>
             </th>
             <th className="h-9 text-left">
@@ -188,21 +188,21 @@ export default function Home() {
                   <PaymentMethodIcon method={method} />
                 </div>
               </td>
-              <td className="pr-4">
+              <td className="pr-16">
                 <span className="text-label-medium-emphasized text-default">{method.name}</span>
               </td>
-              <td className="px-1 pr-12">
+              <td className="px-1 pr-16">
                 <Badge variant={method.status === 'Enabled' ? 'success' : 'default'}>
                   {method.status}
                 </Badge>
               </td>
-              <td className="pr-12">
+              <td className="pr-16">
                 <span className="text-label-medium text-subdued">{method.type}</span>
               </td>
-              <td>
+              <td className="pr-2">
                 <span className="text-label-medium text-subdued truncate block">{method.popularIn}</span>
               </td>
-              <td className="pr-1">
+              <td>
                 <div className="flex items-center justify-end">
                   <div className="hidden group-hover:flex items-center">
                     {method.status === 'Disabled' && (
