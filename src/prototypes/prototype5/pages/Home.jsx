@@ -1,6 +1,15 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { Icon } from '../../../icons/SailIcons';
 import Badge from '../../../sail/Badge';
+
+function Spinner() {
+  return (
+    <svg className="animate-spin h-3 w-3" viewBox="0 0 16 16" fill="none">
+      <circle cx="8" cy="8" r="6.5" stroke="currentColor" strokeWidth="2.5" opacity="0.25" />
+      <path d="M14.5 8a6.5 6.5 0 00-6.5-6.5" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+    </svg>
+  );
+}
 
 // Exact order and data from Figma design
 // iconScale: percentage of the 32px container the logo should fill, derived from Figma insets
@@ -61,19 +70,40 @@ function PaymentMethodIcon({ method }) {
 export default function Home() {
   const [activeTab, setActiveTab] = useState('All');
   const [sortAsc, setSortAsc] = useState(true);
+  const [statusOverrides, setStatusOverrides] = useState({});
+  const [loading, setLoading] = useState({});
+
+  const getKey = (method) => method.id || method.name;
+  const getStatus = (method) => statusOverrides[getKey(method)] || method.status;
+
+  const handleEnable = useCallback((method) => {
+    const key = getKey(method);
+    setLoading(prev => ({ ...prev, [key]: true }));
+    // "Payment method X" goes to Pending, Klarna goes to Enabled
+    const targetStatus = method.name === 'Payment method X' ? 'Pending' : 'Enabled';
+    setTimeout(() => {
+      setLoading(prev => ({ ...prev, [key]: false }));
+      setStatusOverrides(prev => ({ ...prev, [key]: targetStatus }));
+    }, 1500);
+  }, []);
+
+  const methods = useMemo(() =>
+    PAYMENT_METHODS.map(m => ({ ...m, status: getStatus(m) })),
+    [statusOverrides]
+  );
 
   const counts = useMemo(() => ({
-    All: PAYMENT_METHODS.length,
-    Enabled: PAYMENT_METHODS.filter(m => m.status === 'Enabled').length,
-    Disabled: PAYMENT_METHODS.filter(m => m.status === 'Disabled').length,
-  }), []);
+    All: methods.length,
+    Enabled: methods.filter(m => m.status === 'Enabled').length,
+    Disabled: methods.filter(m => m.status === 'Disabled' || m.status === 'Pending').length,
+  }), [methods]);
 
   const filtered = useMemo(() => {
-    let list = PAYMENT_METHODS;
+    let list = methods;
     if (activeTab === 'Enabled') list = list.filter(m => m.status === 'Enabled');
-    if (activeTab === 'Disabled') list = list.filter(m => m.status === 'Disabled');
+    if (activeTab === 'Disabled') list = list.filter(m => m.status === 'Disabled' || m.status === 'Pending');
     return sortAsc ? list : [...list].reverse();
-  }, [activeTab, sortAsc]);
+  }, [activeTab, sortAsc, methods]);
 
   return (
     <div className="pb-8">
@@ -192,9 +222,18 @@ export default function Home() {
                 <span className="text-label-medium-emphasized text-default">{method.name}</span>
               </td>
               <td className="px-1 pr-16">
-                <Badge variant={method.status === 'Enabled' ? 'success' : 'default'}>
-                  {method.status}
-                </Badge>
+                {method.status === 'Pending' ? (
+                  <Badge variant="warning">
+                    <span className="flex items-center gap-1">
+                      Pending
+                      <Icon name="info" style={{ width: 10, height: 10 }} className="text-badge-warning-text" />
+                    </span>
+                  </Badge>
+                ) : (
+                  <Badge variant={method.status === 'Enabled' ? 'success' : 'default'}>
+                    {method.status}
+                  </Badge>
+                )}
               </td>
               <td className="pr-16">
                 <span className="text-label-medium text-subdued">{method.type}</span>
@@ -205,8 +244,12 @@ export default function Home() {
               <td>
                 <div className="flex items-center justify-end">
                   {method.status === 'Disabled' && (
-                    <button className="flex items-center h-6 px-2 text-label-small-emphasized text-default bg-surface border border-transparent group-hover:border-border rounded-l-md transition-colors -mr-px group-hover:hover:border-[#99a5b8] relative group-hover:hover:z-10 invisible group-hover:visible">
-                      Enable
+                    <button
+                      onClick={(e) => { e.stopPropagation(); handleEnable(method); }}
+                      disabled={loading[getKey(method)]}
+                      className="flex items-center justify-center h-6 px-2 text-label-small-emphasized text-default bg-surface border border-transparent group-hover:border-border rounded-l-md transition-colors -mr-px group-hover:hover:border-[#99a5b8] relative group-hover:hover:z-10 invisible group-hover:visible min-w-[52px]"
+                    >
+                      {loading[getKey(method)] ? <Spinner /> : 'Enable'}
                     </button>
                   )}
                   <button className={`flex items-center justify-center h-6 w-6 text-icon-default border border-transparent group-hover:border-border transition-colors group-hover:hover:border-[#99a5b8] relative group-hover:hover:z-10 group-hover:bg-surface ${method.status === 'Disabled' ? 'rounded-r-md' : 'group-hover:rounded-md'}`}>
