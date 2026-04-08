@@ -205,8 +205,7 @@ export default function Home() {
               <td>
                 <div className="flex items-center justify-end opacity-0 group-hover:opacity-100 transition-opacity">
                   {method.status === 'Disabled' && (
-                    <button className="flex items-center gap-1 h-6 px-2 text-label-small-emphasized text-default bg-surface border border-border rounded-l-md hover:bg-offset transition-colors -mr-px">
-                      <Icon name="add" size="xsmall" />
+                    <button className="flex items-center h-6 px-2 text-label-small-emphasized text-default bg-surface border border-border rounded-l-md hover:bg-offset transition-colors -mr-px">
                       Enable
                     </button>
                   )}
