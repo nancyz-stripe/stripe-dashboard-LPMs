@@ -164,7 +164,7 @@ export default function Home() {
                 onClick={() => setSortAsc(!sortAsc)}
               >
                 <span className="text-heading-xsmall text-default">Payment method</span>
-                <Icon name="arrowUpDown" size="xsmall" className="text-icon-default" />
+                <Icon name="arrowUpDown" className="text-icon-default" style={{ width: 8, height: 8 }} />
               </button>
             </th>
             <th className="h-9 text-left pr-16" style={{ width: '13%' }} />
