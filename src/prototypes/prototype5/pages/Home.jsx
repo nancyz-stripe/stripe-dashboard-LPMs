@@ -203,7 +203,7 @@ export default function Home() {
                 <span className="text-label-medium text-subdued truncate block">{method.popularIn}</span>
               </td>
               <td className="w-5">
-                <button className="flex items-center justify-center text-icon-default hover:text-default">
+                <button className="flex items-center justify-center text-icon-default hover:text-default opacity-0 group-hover:opacity-100 transition-opacity">
                   <Icon name="more" size="xsmall" />
                 </button>
               </td>
