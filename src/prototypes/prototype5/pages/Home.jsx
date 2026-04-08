@@ -210,7 +210,7 @@ export default function Home() {
                         Enable
                       </button>
                     )}
-                    <button className="flex items-center justify-center h-6 w-6 text-icon-default bg-surface border border-border hover:bg-offset transition-colors rounded-r-md">
+                    <button className={`flex items-center justify-center h-6 w-6 text-icon-default bg-surface border border-border hover:bg-offset transition-colors ${method.status === 'Disabled' ? 'rounded-r-md' : 'rounded-md'}`}>
                       <Icon name="more" size="xsmall" />
                     </button>
                   </div>
