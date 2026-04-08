@@ -101,11 +101,11 @@
 
   /* Badge variants */
   --color-badge-default-bg: #F5F6F8;
-  --color-badge-default-border: #F5F6F8;
+  --color-badge-default-border: #D5DBE1;
   --color-badge-default-text: #596171;
 
   --color-badge-success-bg: #EAFCDD;
-  --color-badge-success-border: #EAFCDD;
+  --color-badge-success-border: #C5E8B2;
   --color-badge-success-text: #217005;
 
   --color-badge-warning-bg: #FDF8C9;
