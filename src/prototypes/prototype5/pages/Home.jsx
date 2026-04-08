@@ -204,17 +204,12 @@ export default function Home() {
               </td>
               <td>
                 <div className="flex items-center justify-end">
-                  <div className="hidden group-hover:flex items-center">
-                    {method.status === 'Disabled' && (
-                      <button className="flex items-center h-6 px-2 text-label-small-emphasized text-default bg-surface border border-border rounded-l-md transition-colors -mr-px hover:border-[#99a5b8] relative hover:z-10">
-                        Enable
-                      </button>
-                    )}
-                    <button className={`flex items-center justify-center h-6 w-6 text-icon-default bg-surface border border-border transition-colors hover:border-[#99a5b8] relative hover:z-10 ${method.status === 'Disabled' ? 'rounded-r-md' : 'rounded-md'}`}>
-                      <Icon name="more" size="xsmall" />
+                  {method.status === 'Disabled' && (
+                    <button className="flex items-center h-6 px-2 text-label-small-emphasized text-default bg-surface border border-transparent group-hover:border-border rounded-l-md transition-colors -mr-px group-hover:hover:border-[#99a5b8] relative group-hover:hover:z-10 invisible group-hover:visible">
+                      Enable
                     </button>
-                  </div>
-                  <button className="flex group-hover:hidden items-center justify-center w-6 h-6 text-icon-default">
+                  )}
+                  <button className={`flex items-center justify-center h-6 w-6 text-icon-default border border-transparent group-hover:border-border transition-colors group-hover:hover:border-[#99a5b8] relative group-hover:hover:z-10 group-hover:bg-surface ${method.status === 'Disabled' ? 'rounded-r-md' : 'group-hover:rounded-md'}`}>
                     <Icon name="more" size="xsmall" />
                   </button>
                 </div>
