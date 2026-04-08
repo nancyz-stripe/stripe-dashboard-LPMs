@@ -204,13 +204,13 @@ export default function Home() {
               </td>
               <td className="pr-1">
                 <div className="flex items-center justify-end">
-                  <div className="hidden group-hover:flex items-center">
+                  <div className="hidden group-hover:flex items-center" style={{ borderColor: '#99a5b8' }}>
                     {method.status === 'Disabled' && (
-                      <button className="flex items-center h-6 px-2 text-label-small-emphasized text-default bg-surface border border-border rounded-l-md hover:bg-offset transition-colors -mr-px">
+                      <button className="flex items-center h-6 px-2 text-label-small-emphasized text-default bg-surface border rounded-l-md hover:bg-offset transition-colors -mr-px" style={{ borderColor: '#99a5b8' }}>
                         Enable
                       </button>
                     )}
-                    <button className={`flex items-center justify-center h-6 w-6 text-icon-default bg-surface border border-border hover:bg-offset transition-colors ${method.status === 'Disabled' ? 'rounded-r-md' : 'rounded-md'}`}>
+                    <button className={`flex items-center justify-center h-6 w-6 text-icon-default bg-surface border hover:bg-offset transition-colors ${method.status === 'Disabled' ? 'rounded-r-md' : 'rounded-md'}`} style={{ borderColor: '#99a5b8' }}>
                       <Icon name="more" size="xsmall" />
                     </button>
                   </div>
