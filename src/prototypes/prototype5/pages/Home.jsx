@@ -192,14 +192,9 @@ export default function Home() {
                 <span className="text-label-medium-emphasized text-default">{method.name}</span>
               </td>
               <td className="px-1">
-                {method.status === 'Enabled' ? (
-                  <span className="inline-flex items-center gap-1 px-1.5 py-0.5 text-label-small rounded-sm bg-badge-success-bg text-badge-success-text border border-badge-success-border">
-                    <span className="w-1.5 h-1.5 rounded-full bg-badge-success-text shrink-0" />
-                    Enabled
-                  </span>
-                ) : (
-                  <Badge variant="default">Disabled</Badge>
-                )}
+                <Badge variant={method.status === 'Enabled' ? 'success' : 'default'}>
+                  {method.status}
+                </Badge>
               </td>
               <td>
                 <span className="text-label-medium text-subdued">{method.type}</span>
