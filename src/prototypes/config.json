@@ -20,5 +20,10 @@
     "name": "Billing retries",
     "description": "Retry settings for Direct debits and other LPMs",
     "status": "active"
+  },
+  "prototype5": {
+    "name": "PM settings",
+    "description": "Payment method settings page",
+    "status": "active"
   }
 }

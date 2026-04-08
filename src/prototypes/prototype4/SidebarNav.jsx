@@ -76,7 +76,7 @@ export default function SidebarNav() {
             <SubNavItem label="Subscriptions" />
             <SubNavItem label="Invoices" />
             <SubNavItem label="Usage-based" />
-            <SubNavItem label="Revenue recovery" to="" active={isActive('')} highlighted />
+            <SubNavItem label="Revenue recovery" to="" active={isActive('')} />
           </ExpandableNavItem>
           <ExpandableNavItem
             icon={<Icon name="barChart" size="small" fill="currentColor" />}
