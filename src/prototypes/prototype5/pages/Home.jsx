@@ -3,25 +3,26 @@ import { Icon } from '../../../icons/SailIcons';
 import Badge from '../../../sail/Badge';
 
 // Exact order and data from Figma design
+// iconScale: percentage of the 32px container the logo should fill, derived from Figma insets
 const PAYMENT_METHODS = [
   { name: 'Cards', iconType: 'sail', iconName: 'card', iconBg: '#EBEEF1', status: 'Enabled', type: 'Cards', popularIn: 'Global' },
-  { name: 'Cartes Bancaires', iconType: 'img', iconSrc: '/pm-icons/cartes-bancaires.svg', iconBg: '#016797', status: 'Enabled', type: 'Cards', popularIn: 'France' },
+  { name: 'Cartes Bancaires', iconType: 'img', iconSrc: '/pm-icons/cartes-bancaires.svg', iconBg: '#016797', iconScale: 75, status: 'Enabled', type: 'Cards', popularIn: 'France' },
   { name: 'Payment method X', iconType: 'sail', iconName: 'bank', iconBg: '#EBEEF1', status: 'Disabled', type: 'Digital wallet', popularIn: 'Region' },
-  { name: 'Alipay', iconType: 'img', iconSrc: '/pm-icons/alipay.svg', iconBg: '#1c9fe5', status: 'Enabled', type: 'Digital wallet', popularIn: 'China' },
-  { name: 'Amazon Pay', iconType: 'img', iconSrc: '/pm-icons/amazon-pay.svg', iconBg: '#333e48', status: 'Enabled', type: 'Digital wallet', popularIn: 'Global' },
-  { name: 'Apple Pay', iconType: 'img', iconSrc: '/pm-icons/apple-pay.svg', iconBg: '#f6f8fa', status: 'Enabled', type: 'Digital wallet', popularIn: 'Global' },
-  { name: 'Google Pay', iconType: 'img', iconSrc: '/pm-icons/google-pay.svg', iconBg: '#f5f6f8', status: 'Enabled', type: 'Digital wallet', popularIn: 'Global' },
+  { name: 'Alipay', iconType: 'img', iconSrc: '/pm-icons/alipay.svg', iconBg: '#1c9fe5', iconScale: 75, status: 'Enabled', type: 'Digital wallet', popularIn: 'China' },
+  { name: 'Amazon Pay', iconType: 'img', iconSrc: '/pm-icons/amazon-pay.svg', iconBg: '#333e48', iconScale: 78, status: 'Enabled', type: 'Digital wallet', popularIn: 'Global' },
+  { name: 'Apple Pay', iconType: 'img', iconSrc: '/pm-icons/apple-pay.svg', iconBg: '#f6f8fa', iconScale: 81, status: 'Enabled', type: 'Digital wallet', popularIn: 'Global' },
+  { name: 'Google Pay', iconType: 'img', iconSrc: '/pm-icons/google-pay.svg', iconBg: '#f5f6f8', iconScale: 81, status: 'Enabled', type: 'Digital wallet', popularIn: 'Global' },
   { name: 'Klarna', iconType: 'text', iconText: 'K', iconBg: '#ffb3c7', iconColor: '#000', status: 'Disabled', type: 'Buy now, pay later', popularIn: 'Global' },
   { name: 'Link', iconType: 'text', iconText: '▶', iconBg: '#00d66f', iconColor: '#011E0F', status: 'Enabled', type: 'Digital wallet', popularIn: 'Global' },
-  { name: 'PayPal', iconType: 'img', iconSrc: '/pm-icons/paypal.svg', iconBg: '#f5f6f8', status: 'Enabled', type: 'Digital wallet', popularIn: 'Global' },
-  { name: 'Revolut Pay', iconType: 'img', iconSrc: '/pm-icons/revolut-pay.svg', iconBg: '#191c1f', status: 'Enabled', type: 'Digital wallet', popularIn: 'Europe, United Kingdom' },
-  { name: 'Naver Pay', iconType: 'img', iconSrc: '/pm-icons/naver-pay.svg', iconBg: '#00de5a', status: 'Disabled', type: 'Digital wallet', popularIn: 'South Korea' },
-  { name: 'PAYCO', iconType: 'img', iconSrc: '/pm-icons/payco.svg', iconBg: '#fa2828', status: 'Disabled', type: 'Digital wallet', popularIn: 'South Korea' },
-  { name: 'Samsung Pay', iconType: 'img', iconSrc: '/pm-icons/samsung-pay.svg', iconBg: '#1f4ac7', status: 'Disabled', type: 'Digital wallet', popularIn: 'South Korea' },
-  { name: 'WeChat Pay', iconType: 'img', iconSrc: '/pm-icons/wechat-pay.svg', iconBg: '#f0f5f7', status: 'Disabled', type: 'Digital wallet', popularIn: 'China' },
-  { name: 'Affirm', iconType: 'img', iconSrc: '/pm-icons/affirm.svg', iconBg: '#4a4af4', status: 'Enabled', type: 'Buy now, pay later', popularIn: 'United States, Canada' },
-  { name: 'Afterpay / Clearpay', iconType: 'img', iconSrc: '/pm-icons/afterpay.svg', iconBg: '#00d64f', status: 'Enabled', type: 'Buy now, pay later', popularIn: 'Australia, Canada, New Zealand, United Kingdom, United States' },
-  { name: 'Capchase Pay', iconType: 'img', iconSrc: '/pm-icons/capchase-pay.svg', iconBg: '#323231', status: 'Disabled', type: 'Buy now, pay later', popularIn: 'United States' },
+  { name: 'PayPal', iconType: 'img', iconSrc: '/pm-icons/paypal.svg', iconBg: '#f5f6f8', iconScale: 55, status: 'Enabled', type: 'Digital wallet', popularIn: 'Global' },
+  { name: 'Revolut Pay', iconType: 'img', iconSrc: '/pm-icons/revolut-pay.svg', iconBg: '#191c1f', iconScale: 47, status: 'Enabled', type: 'Digital wallet', popularIn: 'Europe, United Kingdom' },
+  { name: 'Naver Pay', iconType: 'img', iconSrc: '/pm-icons/naver-pay.svg', iconBg: '#00de5a', iconScale: 100, status: 'Disabled', type: 'Digital wallet', popularIn: 'South Korea' },
+  { name: 'PAYCO', iconType: 'img', iconSrc: '/pm-icons/payco.svg', iconBg: '#fa2828', iconScale: 78, status: 'Disabled', type: 'Digital wallet', popularIn: 'South Korea' },
+  { name: 'Samsung Pay', iconType: 'img', iconSrc: '/pm-icons/samsung-pay.svg', iconBg: '#1f4ac7', iconScale: 69, status: 'Disabled', type: 'Digital wallet', popularIn: 'South Korea' },
+  { name: 'WeChat Pay', iconType: 'img', iconSrc: '/pm-icons/wechat-pay.svg', iconBg: '#f0f5f7', iconScale: 75, status: 'Disabled', type: 'Digital wallet', popularIn: 'China' },
+  { name: 'Affirm', iconType: 'img', iconSrc: '/pm-icons/affirm.svg', iconBg: '#4a4af4', iconScale: 75, status: 'Enabled', type: 'Buy now, pay later', popularIn: 'United States, Canada' },
+  { name: 'Afterpay / Clearpay', iconType: 'img', iconSrc: '/pm-icons/afterpay.svg', iconBg: '#00d64f', iconScale: 50, status: 'Enabled', type: 'Buy now, pay later', popularIn: 'Australia, Canada, New Zealand, United Kingdom, United States' },
+  { name: 'Capchase Pay', iconType: 'img', iconSrc: '/pm-icons/capchase-pay.svg', iconBg: '#323231', iconScale: 61, status: 'Disabled', type: 'Buy now, pay later', popularIn: 'United States' },
   { name: 'Klarna', iconType: 'text', iconText: 'K', iconBg: '#ffb3c7', iconColor: '#000', status: 'Enabled', type: 'Buy now, pay later', popularIn: 'Europe, United States', id: 'klarna-2' },
 ];
 
@@ -37,9 +38,10 @@ function PaymentMethodIcon({ method }) {
     );
   }
   if (method.iconType === 'img') {
+    const scale = method.iconScale || 70;
     return (
       <div className="w-8 h-8 rounded-sm flex items-center justify-center shrink-0 overflow-hidden" style={{ backgroundColor: method.iconBg }}>
-        <img src={method.iconSrc} alt={method.name} className="w-[70%] h-[70%] object-contain" />
+        <img src={method.iconSrc} alt={method.name} className="object-contain" style={{ width: `${scale}%`, height: `${scale}%` }} />
       </div>
     );
   }
