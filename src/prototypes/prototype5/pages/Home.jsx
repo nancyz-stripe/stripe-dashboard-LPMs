@@ -105,7 +105,7 @@ export default function Home() {
       </div>
 
       {/* Description */}
-      <p className="text-body-small text-subdued mb-6 max-w-[972px] leading-relaxed">
+      <p className="text-body-small text-subdued mb-6 leading-relaxed">
         Stripe will display payment methods dynamically based on order amount, currency and your configuration. Changes will affect Checkout, Payment Links and Elements. You can also apply{' '}
         <span className="text-brand cursor-pointer hover:underline">custom targeting rules</span>{' '}
         to individual payment methods or create multiple configurations. Learn more about{' '}
