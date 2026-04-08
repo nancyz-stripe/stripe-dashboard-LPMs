@@ -12,8 +12,8 @@ const PAYMENT_METHODS = [
   { name: 'Amazon Pay', iconType: 'img', iconSrc: '/pm-icons/amazon-pay.svg', iconBg: '#333e48', iconScale: 78, status: 'Enabled', type: 'Digital wallet', popularIn: 'Global' },
   { name: 'Apple Pay', iconType: 'img', iconSrc: '/pm-icons/apple-pay.svg', iconBg: '#f6f8fa', iconScale: 81, status: 'Enabled', type: 'Digital wallet', popularIn: 'Global' },
   { name: 'Google Pay', iconType: 'img', iconSrc: '/pm-icons/google-pay.svg', iconBg: '#f5f6f8', iconScale: 81, status: 'Enabled', type: 'Digital wallet', popularIn: 'Global' },
-  { name: 'Klarna', iconType: 'text', iconText: 'K', iconBg: '#ffb3c7', iconColor: '#000', status: 'Disabled', type: 'Buy now, pay later', popularIn: 'Global' },
-  { name: 'Link', iconType: 'text', iconText: '▶', iconBg: '#00d66f', iconColor: '#011E0F', status: 'Enabled', type: 'Digital wallet', popularIn: 'Global' },
+  { name: 'Klarna', iconType: 'klarna', iconBg: '#ffb3c7', status: 'Disabled', type: 'Buy now, pay later', popularIn: 'Global' },
+  { name: 'Link', iconType: 'link', iconBg: '#00d66f', status: 'Enabled', type: 'Digital wallet', popularIn: 'Global' },
   { name: 'PayPal', iconType: 'img', iconSrc: '/pm-icons/paypal.svg', iconBg: '#f5f6f8', iconScale: 55, status: 'Enabled', type: 'Digital wallet', popularIn: 'Global' },
   { name: 'Revolut Pay', iconType: 'img', iconSrc: '/pm-icons/revolut-pay.svg', iconBg: '#191c1f', iconScale: 47, status: 'Enabled', type: 'Digital wallet', popularIn: 'Europe, United Kingdom' },
   { name: 'Naver Pay', iconType: 'img', iconSrc: '/pm-icons/naver-pay.svg', iconBg: '#00de5a', iconScale: 100, status: 'Disabled', type: 'Digital wallet', popularIn: 'South Korea' },
@@ -23,11 +23,29 @@ const PAYMENT_METHODS = [
   { name: 'Affirm', iconType: 'img', iconSrc: '/pm-icons/affirm.svg', iconBg: '#4a4af4', iconScale: 75, status: 'Enabled', type: 'Buy now, pay later', popularIn: 'United States, Canada' },
   { name: 'Afterpay / Clearpay', iconType: 'img', iconSrc: '/pm-icons/afterpay.svg', iconBg: '#00d64f', iconScale: 50, status: 'Enabled', type: 'Buy now, pay later', popularIn: 'Australia, Canada, New Zealand, United Kingdom, United States' },
   { name: 'Capchase Pay', iconType: 'img', iconSrc: '/pm-icons/capchase-pay.svg', iconBg: '#323231', iconScale: 61, status: 'Disabled', type: 'Buy now, pay later', popularIn: 'United States' },
-  { name: 'Klarna', iconType: 'text', iconText: 'K', iconBg: '#ffb3c7', iconColor: '#000', status: 'Enabled', type: 'Buy now, pay later', popularIn: 'Europe, United States', id: 'klarna-2' },
+  { name: 'Klarna', iconType: 'klarna', iconBg: '#ffb3c7', status: 'Enabled', type: 'Buy now, pay later', popularIn: 'Europe, United States', id: 'klarna-2' },
 ];
 
 const FILTER_TABS = ['All', 'Enabled', 'Disabled'];
 const FILTER_CHIPS = ['Payment method name', 'Type', 'Popular in', 'Recurring payments'];
+
+function KlarnaLogo() {
+  return (
+    <svg width="18" height="20" viewBox="0 0 18 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M3.6 0H0V20H3.6V0Z" fill="black"/>
+      <path d="M10.8 0C10.8 4.05 9.02 7.74 6.04 10.2L4.68 11.32L11.32 20H15.84L9.56 11.84C11.84 8.84 13.2 5.1 13.2 1.08V0H10.8Z" fill="black"/>
+      <path d="M16.2 17.8C16.2 16.59 15.21 15.6 14 15.6C12.79 15.6 11.8 16.59 11.8 17.8C11.8 19.01 12.79 20 14 20C15.21 20 16.2 19.01 16.2 17.8Z" fill="black"/>
+    </svg>
+  );
+}
+
+function LinkLogo() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M4.5 2L11.5 8L4.5 14" stroke="#011E0F" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  );
+}
 
 function PaymentMethodIcon({ method }) {
   if (method.iconType === 'sail') {
@@ -42,6 +60,20 @@ function PaymentMethodIcon({ method }) {
     return (
       <div className="w-8 h-8 rounded-sm flex items-center justify-center shrink-0 overflow-hidden" style={{ backgroundColor: method.iconBg }}>
         <img src={method.iconSrc} alt={method.name} className="object-contain" style={{ width: `${scale}%`, height: `${scale}%` }} />
+      </div>
+    );
+  }
+  if (method.iconType === 'klarna') {
+    return (
+      <div className="w-8 h-8 rounded-sm flex items-center justify-center shrink-0" style={{ backgroundColor: method.iconBg }}>
+        <KlarnaLogo />
+      </div>
+    );
+  }
+  if (method.iconType === 'link') {
+    return (
+      <div className="w-8 h-8 rounded-sm flex items-center justify-center shrink-0" style={{ backgroundColor: method.iconBg }}>
+        <LinkLogo />
       </div>
     );
   }
