@@ -167,8 +167,8 @@ export default function Home() {
                 <Icon name="arrowUpDown" size="xsmall" className="text-icon-default" />
               </button>
             </th>
-            <th className="h-9 text-left" style={{ width: '11%' }} />
-            <th className="h-9 text-left" style={{ width: '17%' }}>
+            <th className="h-9 text-left pr-12" style={{ width: '13%' }} />
+            <th className="h-9 text-left pr-12" style={{ width: '18%' }}>
               <span className="text-heading-xsmall text-default">Type</span>
             </th>
             <th className="h-9 text-left">
@@ -191,12 +191,12 @@ export default function Home() {
               <td className="pr-4">
                 <span className="text-label-medium-emphasized text-default">{method.name}</span>
               </td>
-              <td className="px-1">
+              <td className="px-1 pr-12">
                 <Badge variant={method.status === 'Enabled' ? 'success' : 'default'}>
                   {method.status}
                 </Badge>
               </td>
-              <td>
+              <td className="pr-12">
                 <span className="text-label-medium text-subdued">{method.type}</span>
               </td>
               <td>
