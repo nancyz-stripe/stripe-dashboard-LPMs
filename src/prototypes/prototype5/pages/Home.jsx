@@ -203,13 +203,18 @@ export default function Home() {
                 <span className="text-label-medium text-subdued truncate block">{method.popularIn}</span>
               </td>
               <td>
-                <div className="flex items-center justify-end opacity-0 group-hover:opacity-100 transition-opacity">
-                  {method.status === 'Disabled' && (
-                    <button className="flex items-center h-6 px-2 text-label-small-emphasized text-default bg-surface border border-border rounded-l-md hover:bg-offset transition-colors -mr-px">
-                      Enable
+                <div className="flex items-center justify-end">
+                  <div className="hidden group-hover:flex items-center">
+                    {method.status === 'Disabled' && (
+                      <button className="flex items-center h-6 px-2 text-label-small-emphasized text-default bg-surface border border-border rounded-l-md hover:bg-offset transition-colors -mr-px">
+                        Enable
+                      </button>
+                    )}
+                    <button className="flex items-center justify-center h-6 w-6 text-icon-default bg-surface border border-border hover:bg-offset transition-colors rounded-r-md">
+                      <Icon name="more" size="xsmall" />
                     </button>
-                  )}
-                  <button className={`flex items-center justify-center h-6 w-6 text-icon-default bg-surface border border-border hover:bg-offset transition-colors ${method.status === 'Disabled' ? 'rounded-r-md' : 'rounded-md'}`}>
+                  </div>
+                  <button className="flex group-hover:hidden items-center justify-center text-icon-default">
                     <Icon name="more" size="xsmall" />
                   </button>
                 </div>
