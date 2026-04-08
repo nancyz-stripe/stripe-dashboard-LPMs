@@ -206,7 +206,7 @@ export default function Home() {
                 <div className="flex items-center justify-end">
                   <div className="hidden group-hover:flex items-center">
                     {method.status === 'Disabled' && (
-                      <button className="flex items-center h-6 px-2 text-label-small-emphasized text-default bg-surface border border-border rounded-l-md transition-colors -mr-px hover:border-[#99a5b8]">
+                      <button className="flex items-center h-6 px-2 text-label-small-emphasized text-default bg-surface border border-border rounded-l-md transition-colors -mr-px hover:border-[#99a5b8] relative hover:z-10">
                         Enable
                       </button>
                     )}
