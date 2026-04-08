@@ -174,7 +174,7 @@ export default function Home() {
             <th className="h-9 text-left">
               <span className="text-heading-xsmall text-default">Popular in</span>
             </th>
-            <th className="w-7 h-9" />
+            <th className="w-5 h-9" />
           </tr>
         </thead>
         <tbody>
@@ -202,7 +202,7 @@ export default function Home() {
               <td>
                 <span className="text-label-medium text-subdued truncate block">{method.popularIn}</span>
               </td>
-              <td className="w-7">
+              <td className="w-5">
                 <button className="flex items-center justify-center text-icon-default hover:text-default">
                   <Icon name="more" size="xsmall" />
                 </button>
