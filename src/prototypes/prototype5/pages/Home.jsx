@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import { Icon } from '../../../icons/SailIcons';
 import Badge from '../../../sail/Badge';
 
@@ -8,6 +8,41 @@ function Spinner() {
       <circle cx="8" cy="8" r="6.5" stroke="currentColor" strokeWidth="2.5" opacity="0.25" />
       <path d="M14.5 8a6.5 6.5 0 00-6.5-6.5" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
     </svg>
+  );
+}
+
+function OverflowMenu({ method, onDisable, onClose }) {
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (ref.current && !ref.current.contains(e.target)) onClose();
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [onClose]);
+
+  return (
+    <div
+      ref={ref}
+      className="absolute right-0 top-full mt-1 z-50 bg-surface border rounded-lg p-1 min-w-[160px]"
+      style={{ borderColor: '#D8DEE4', boxShadow: '0px 15px 35px 0px rgba(48,49,61,0.08), 0px 5px 15px 0px rgba(0,0,0,0.12)' }}
+    >
+      <button
+        onClick={(e) => { e.stopPropagation(); onClose(); }}
+        className="flex w-full items-start px-2.5 py-1.5 text-label-medium text-default rounded hover:bg-offset transition-colors"
+      >
+        View details
+      </button>
+      {(method.status === 'Enabled' || method.status === 'Pending') && (
+        <button
+          onClick={(e) => { e.stopPropagation(); onDisable(method); }}
+          className="flex w-full items-start px-2.5 py-1.5 text-label-medium text-default rounded hover:bg-offset transition-colors"
+        >
+          Disable
+        </button>
+      )}
+    </div>
   );
 }
 
@@ -72,6 +107,7 @@ export default function Home() {
   const [sortAsc, setSortAsc] = useState(true);
   const [statusOverrides, setStatusOverrides] = useState({});
   const [loading, setLoading] = useState({});
+  const [openMenu, setOpenMenu] = useState(null);
 
   const getKey = (method) => method.id || method.name;
   const getStatus = (method) => statusOverrides[getKey(method)] || method.status;
@@ -85,6 +121,12 @@ export default function Home() {
       setLoading(prev => ({ ...prev, [key]: false }));
       setStatusOverrides(prev => ({ ...prev, [key]: targetStatus }));
     }, 1500);
+  }, []);
+
+  const handleDisable = useCallback((method) => {
+    const key = getKey(method);
+    setStatusOverrides(prev => ({ ...prev, [key]: 'Disabled' }));
+    setOpenMenu(null);
   }, []);
 
   const methods = useMemo(() =>
@@ -252,9 +294,17 @@ export default function Home() {
                       {loading[getKey(method)] ? <Spinner /> : 'Enable'}
                     </button>
                   )}
-                  <button className={`flex items-center justify-center h-6 w-6 text-icon-default border border-transparent group-hover:border-border transition-colors group-hover:hover:border-[#99a5b8] relative group-hover:hover:z-10 group-hover:bg-surface ${method.status === 'Disabled' ? 'rounded-r-md' : 'group-hover:rounded-md'}`}>
-                    <Icon name="more" size="xsmall" />
-                  </button>
+                  <div className="relative">
+                    <button
+                      onClick={(e) => { e.stopPropagation(); setOpenMenu(openMenu === getKey(method) ? null : getKey(method)); }}
+                      className={`flex items-center justify-center h-6 w-6 text-icon-default border border-transparent group-hover:border-border transition-colors group-hover:hover:border-[#99a5b8] relative group-hover:hover:z-10 group-hover:bg-surface ${method.status === 'Disabled' ? 'rounded-r-md' : 'group-hover:rounded-md'}`}
+                    >
+                      <Icon name="more" size="xsmall" />
+                    </button>
+                    {openMenu === getKey(method) && (
+                      <OverflowMenu method={method} onDisable={handleDisable} onClose={() => setOpenMenu(null)} />
+                    )}
+                  </div>
                 </div>
               </td>
             </tr>
