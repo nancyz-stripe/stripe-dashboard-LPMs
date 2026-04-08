@@ -2,41 +2,50 @@ import { useState, useMemo } from 'react';
 import { Icon } from '../../../icons/SailIcons';
 import Badge from '../../../sail/Badge';
 
+// Exact order and data from Figma design
 const PAYMENT_METHODS = [
-  { name: 'Cards', icon: '💳', iconBg: 'bg-gray-100', status: 'Enabled', type: 'Cards', popularIn: 'Global' },
-  { name: 'Cartes Bancaires', icon: 'CB', iconBg: 'bg-blue-600', iconText: true, status: 'Enabled', type: 'Cards', popularIn: 'France' },
-  { name: 'Payment method X', icon: '🏛', iconBg: 'bg-gray-100', status: 'Disabled', type: 'Digital wallet', popularIn: 'Region' },
-  { name: 'Alipay', icon: 'A', iconBg: 'bg-blue-500', iconText: true, status: 'Enabled', type: 'Digital wallet', popularIn: 'China' },
-  { name: 'Amazon Pay', icon: 'pay', iconBg: 'bg-gray-800', iconText: true, status: 'Enabled', type: 'Digital wallet', popularIn: 'Global' },
-  { name: 'Apple Pay', icon: 'AP', iconBg: 'bg-black', iconText: true, status: 'Enabled', type: 'Digital wallet', popularIn: 'Global' },
-  { name: 'Google Pay', icon: 'GP', iconBg: 'bg-white border border-border', iconText: true, status: 'Enabled', type: 'Digital wallet', popularIn: 'Global' },
-  { name: 'Klarna', icon: 'K', iconBg: 'bg-pink-400', iconText: true, status: 'Disabled', type: 'Buy now, pay later', popularIn: 'Global' },
-  { name: 'Link', icon: '▶', iconBg: 'bg-green-500', iconText: true, status: 'Enabled', type: 'Digital wallet', popularIn: 'Global' },
-  { name: 'PayPal', icon: 'PP', iconBg: 'bg-blue-700', iconText: true, status: 'Enabled', type: 'Digital wallet', popularIn: 'Global' },
-  { name: 'Revolut Pay', icon: 'R', iconBg: 'bg-black', iconText: true, status: 'Enabled', type: 'Digital wallet', popularIn: 'Europe, United Kingdom' },
-  { name: 'Samsung Pay', icon: 'SP', iconBg: 'bg-blue-900', iconText: true, status: 'Disabled', type: 'Digital wallet', popularIn: 'Global' },
-  { name: 'Swish', icon: 'S', iconBg: 'bg-white border border-border', iconText: true, status: 'Disabled', type: 'Digital wallet', popularIn: 'Global' },
-  { name: 'WeChat Pay', icon: 'WC', iconBg: 'bg-green-600', iconText: true, status: 'Disabled', type: 'Digital wallet', popularIn: 'Global' },
-  { name: 'Przelewy24', icon: 'P24', iconBg: 'bg-red-600', iconText: true, status: 'Disabled', type: 'Digital wallet', popularIn: 'Global' },
-  { name: 'BLIK', icon: 'B', iconBg: 'bg-black', iconText: true, status: 'Enabled', type: 'Digital wallet', popularIn: 'Global' },
-  { name: 'ACH Direct Debit', icon: 'ACH', iconBg: 'bg-blue-500', iconText: true, status: 'Enabled', type: 'Digital wallet', popularIn: 'Global' },
-  { name: 'Affirm', icon: 'Af', iconBg: 'bg-blue-800', iconText: true, status: 'Disabled', type: 'Digital wallet', popularIn: 'Global' },
-  { name: 'SEPA Direct Debit', icon: 'EU', iconBg: 'bg-blue-600', iconText: true, status: 'Disabled', type: 'Digital wallet', popularIn: 'Global' },
-  { name: 'Boleto', icon: 'Bo', iconBg: 'bg-gray-600', iconText: true, status: 'Enabled', type: 'Digital wallet', popularIn: 'Global' },
+  { name: 'Cards', iconType: 'sail', iconName: 'card', iconBg: '#EBEEF1', status: 'Enabled', type: 'Cards', popularIn: 'Global' },
+  { name: 'Cartes Bancaires', iconType: 'img', iconSrc: '/pm-icons/cartes-bancaires.png', iconBg: '#016797', status: 'Enabled', type: 'Cards', popularIn: 'France' },
+  { name: 'Payment method X', iconType: 'sail', iconName: 'bank', iconBg: '#EBEEF1', status: 'Disabled', type: 'Digital wallet', popularIn: 'Region' },
+  { name: 'Alipay', iconType: 'img', iconSrc: '/pm-icons/alipay.png', iconBg: '#1c9fe5', status: 'Enabled', type: 'Digital wallet', popularIn: 'China' },
+  { name: 'Amazon Pay', iconType: 'img', iconSrc: '/pm-icons/amazon-pay.png', iconBg: '#333e48', status: 'Enabled', type: 'Digital wallet', popularIn: 'Global' },
+  { name: 'Apple Pay', iconType: 'img', iconSrc: '/pm-icons/apple-pay.png', iconBg: '#f6f8fa', status: 'Enabled', type: 'Digital wallet', popularIn: 'Global' },
+  { name: 'Google Pay', iconType: 'img', iconSrc: '/pm-icons/google-pay.png', iconBg: '#f5f6f8', status: 'Enabled', type: 'Digital wallet', popularIn: 'Global' },
+  { name: 'Klarna', iconType: 'text', iconText: 'K', iconBg: '#ffb3c7', iconColor: '#000', status: 'Disabled', type: 'Buy now, pay later', popularIn: 'Global' },
+  { name: 'Link', iconType: 'text', iconText: '▶', iconBg: '#00d66f', iconColor: '#011E0F', status: 'Enabled', type: 'Digital wallet', popularIn: 'Global' },
+  { name: 'PayPal', iconType: 'img', iconSrc: '/pm-icons/paypal.png', iconBg: '#f5f6f8', status: 'Enabled', type: 'Digital wallet', popularIn: 'Global' },
+  { name: 'Revolut Pay', iconType: 'img', iconSrc: '/pm-icons/revolut-pay.png', iconBg: '#191c1f', status: 'Enabled', type: 'Digital wallet', popularIn: 'Europe, United Kingdom' },
+  { name: 'Naver Pay', iconType: 'img', iconSrc: '/pm-icons/naver-pay.png', iconBg: '#00de5a', status: 'Disabled', type: 'Digital wallet', popularIn: 'South Korea' },
+  { name: 'PAYCO', iconType: 'img', iconSrc: '/pm-icons/payco.png', iconBg: '#fa2828', status: 'Disabled', type: 'Digital wallet', popularIn: 'South Korea' },
+  { name: 'Samsung Pay', iconType: 'img', iconSrc: '/pm-icons/samsung-pay.png', iconBg: '#1f4ac7', status: 'Disabled', type: 'Digital wallet', popularIn: 'South Korea' },
+  { name: 'WeChat Pay', iconType: 'img', iconSrc: '/pm-icons/wechat-pay.png', iconBg: '#f0f5f7', status: 'Disabled', type: 'Digital wallet', popularIn: 'China' },
+  { name: 'Affirm', iconType: 'img', iconSrc: '/pm-icons/affirm.png', iconBg: '#4a4af4', status: 'Enabled', type: 'Buy now, pay later', popularIn: 'United States, Canada' },
+  { name: 'Afterpay / Clearpay', iconType: 'img', iconSrc: '/pm-icons/afterpay.png', iconBg: '#00d64f', status: 'Enabled', type: 'Buy now, pay later', popularIn: 'Australia, Canada, New Zealand, United Kingdom, United States' },
+  { name: 'Capchase Pay', iconType: 'img', iconSrc: '/pm-icons/capchase-pay.png', iconBg: '#323231', status: 'Disabled', type: 'Buy now, pay later', popularIn: 'United States' },
+  { name: 'Klarna', iconType: 'text', iconText: 'K', iconBg: '#ffb3c7', iconColor: '#000', status: 'Enabled', type: 'Buy now, pay later', popularIn: 'Europe, United States', id: 'klarna-2' },
 ];
 
 const FILTER_TABS = ['All', 'Enabled', 'Disabled'];
-
 const FILTER_CHIPS = ['Payment method name', 'Type', 'Popular in', 'Recurring payments'];
 
 function PaymentMethodIcon({ method }) {
+  if (method.iconType === 'sail') {
+    return (
+      <div className="w-8 h-8 rounded-sm flex items-center justify-center shrink-0" style={{ backgroundColor: method.iconBg }}>
+        <Icon name={method.iconName} size="small" className="text-icon-default" />
+      </div>
+    );
+  }
+  if (method.iconType === 'img') {
+    return (
+      <div className="w-8 h-8 rounded-sm flex items-center justify-center shrink-0 overflow-hidden" style={{ backgroundColor: method.iconBg }}>
+        <img src={method.iconSrc} alt={method.name} className="w-[70%] h-[70%] object-contain" />
+      </div>
+    );
+  }
   return (
-    <div className={`w-8 h-8 rounded flex items-center justify-center text-label-small ${method.iconBg} ${method.iconText ? 'text-white' : ''} overflow-hidden shrink-0`}>
-      {method.iconText ? (
-        <span className="text-[10px] font-bold leading-none">{method.icon}</span>
-      ) : (
-        <span className="text-base leading-none">{method.icon}</span>
-      )}
+    <div className="w-8 h-8 rounded-sm flex items-center justify-center shrink-0" style={{ backgroundColor: method.iconBg, color: method.iconColor || '#fff' }}>
+      <span className="text-[11px] font-bold leading-none">{method.iconText}</span>
     </div>
   );
 }
@@ -55,7 +64,7 @@ export default function Home() {
     let list = PAYMENT_METHODS;
     if (activeTab === 'Enabled') list = list.filter(m => m.status === 'Enabled');
     if (activeTab === 'Disabled') list = list.filter(m => m.status === 'Disabled');
-    return [...list].sort((a, b) => sortAsc ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name));
+    return sortAsc ? list : [...list].reverse();
   }, [activeTab, sortAsc]);
 
   return (
@@ -134,66 +143,64 @@ export default function Home() {
         ))}
       </div>
 
-      {/* Table toolbar */}
-      <div className="flex items-center justify-between mb-3">
-        <span className="text-label-small text-subdued">{filtered.length} results</span>
-      </div>
-
       {/* Table */}
-      <div className="w-full">
-        {/* Table header */}
-        <div className="flex items-center py-2 border-b border-border">
-          <div className="w-12 shrink-0" />
-          <div
-            className="flex-[2] min-w-[160px] flex items-center gap-1 cursor-pointer select-none"
-            onClick={() => setSortAsc(!sortAsc)}
-          >
-            <span className="text-label-small-emphasized text-subdued">Payment method</span>
-            <Icon name="arrowUpDown" size="xsmall" className="text-subdued" />
-          </div>
-          <div className="flex-[1] min-w-[100px]">
-            <span className="text-label-small-emphasized text-subdued">Status</span>
-          </div>
-          <div className="flex-[1.5] min-w-[130px]">
-            <span className="text-label-small-emphasized text-subdued">Type</span>
-          </div>
-          <div className="flex-[1.5] min-w-[130px]">
-            <span className="text-label-small-emphasized text-subdued">Popular in</span>
-          </div>
-          <div className="w-10 shrink-0" />
-        </div>
-
-        {/* Table rows */}
-        {filtered.map((method) => (
-          <div
-            key={method.name}
-            className="flex items-center py-3 border-b border-border hover:bg-offset transition-colors cursor-pointer group"
-          >
-            <div className="w-12 shrink-0 flex justify-center">
-              <PaymentMethodIcon method={method} />
-            </div>
-            <div className="flex-[2] min-w-[160px]">
-              <span className="text-body-small text-default">{method.name}</span>
-            </div>
-            <div className="flex-[1] min-w-[100px]">
-              <Badge variant={method.status === 'Enabled' ? 'success' : 'default'}>
-                {method.status}
-              </Badge>
-            </div>
-            <div className="flex-[1.5] min-w-[130px]">
-              <span className="text-body-small text-subdued">{method.type}</span>
-            </div>
-            <div className="flex-[1.5] min-w-[130px]">
-              <span className="text-body-small text-subdued">{method.popularIn}</span>
-            </div>
-            <div className="w-10 shrink-0 flex justify-center">
-              <button className="text-subdued opacity-0 group-hover:opacity-100 transition-opacity hover:text-default">
-                <Icon name="more" size="small" />
+      <table className="w-full border-collapse">
+        <thead>
+          <tr className="border-b border-border">
+            <th className="w-12 h-9 shrink-0" />
+            <th className="h-9 text-left pr-4" style={{ width: '19%' }}>
+              <button
+                className="flex items-center gap-1 cursor-pointer select-none"
+                onClick={() => setSortAsc(!sortAsc)}
+              >
+                <span className="text-heading-xsmall text-default">Payment method</span>
+                <Icon name="arrowUpDown" size="xsmall" className="text-icon-default" />
               </button>
-            </div>
-          </div>
-        ))}
-      </div>
+            </th>
+            <th className="h-9 text-left" style={{ width: '11%' }} />
+            <th className="h-9 text-left" style={{ width: '17%' }}>
+              <span className="text-heading-xsmall text-default">Type</span>
+            </th>
+            <th className="h-9 text-left">
+              <span className="text-heading-xsmall text-default">Popular in</span>
+            </th>
+            <th className="w-7 h-9" />
+          </tr>
+        </thead>
+        <tbody>
+          {filtered.map((method) => (
+            <tr
+              key={method.id || method.name}
+              className="border-b border-border hover:bg-offset transition-colors cursor-pointer group h-12"
+            >
+              <td className="w-12 pr-3">
+                <div className="flex items-center justify-center">
+                  <PaymentMethodIcon method={method} />
+                </div>
+              </td>
+              <td className="pr-4">
+                <span className="text-label-medium-emphasized text-default">{method.name}</span>
+              </td>
+              <td className="px-1">
+                <Badge variant={method.status === 'Enabled' ? 'success' : 'default'}>
+                  {method.status}
+                </Badge>
+              </td>
+              <td>
+                <span className="text-label-medium text-subdued">{method.type}</span>
+              </td>
+              <td>
+                <span className="text-label-medium text-subdued truncate block">{method.popularIn}</span>
+              </td>
+              <td className="w-7">
+                <button className="flex items-center justify-center text-subdued hover:text-default">
+                  <Icon name="more" size="small" />
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }
