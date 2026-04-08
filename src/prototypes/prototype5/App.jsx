@@ -23,12 +23,7 @@ export default function Prototype5App({ basePath = '' }) {
   return (
     <BasePathContext.Provider value={basePath}>
       <div className="min-h-screen bg-surface">
-        <ControlPanel
-          darkMode={darkMode}
-          onToggleDarkMode={() => setDarkMode(!darkMode)}
-          sandboxMode={sandboxMode}
-          onToggleSandboxMode={() => setSandboxMode(!sandboxMode)}
-        />
+        {/* ControlPanel hidden for now */}
 
         <div className="flex flex-col min-h-screen">
           <div className="flex flex-row flex-1 bg-surface">
