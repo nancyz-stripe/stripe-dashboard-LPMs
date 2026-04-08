@@ -78,10 +78,12 @@ export default function Home() {
   return (
     <div className="pb-8">
       {/* Breadcrumbs */}
-      <div className="flex items-center gap-1.5 text-body-small mb-3">
-        <span className="text-brand cursor-pointer hover:underline">Settings</span>
-        <Icon name="chevronRight" size="xsmall" className="text-subdued" />
-        <span className="text-brand cursor-pointer hover:underline">Payments</span>
+      <div className="flex items-center gap-2 mb-3">
+        <span className="text-label-small-emphasized cursor-pointer" style={{ color: '#533AFD' }}>Settings</span>
+        <svg width="8" height="8" viewBox="0 0 16 16" fill="none" className="text-subdued shrink-0">
+          <path d="M6 3L11 8L6 13" stroke="#6C7688" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+        <span className="text-label-small-emphasized cursor-pointer" style={{ color: '#533AFD' }}>Payments</span>
       </div>
 
       {/* Title row */}
@@ -190,9 +192,14 @@ export default function Home() {
                 <span className="text-label-medium-emphasized text-default">{method.name}</span>
               </td>
               <td className="px-1">
-                <Badge variant={method.status === 'Enabled' ? 'success' : 'default'}>
-                  {method.status}
-                </Badge>
+                {method.status === 'Enabled' ? (
+                  <span className="inline-flex items-center gap-1 px-1.5 py-0.5 text-label-small rounded-sm bg-badge-success-bg text-badge-success-text border border-badge-success-border">
+                    <span className="w-1.5 h-1.5 rounded-full bg-badge-success-text shrink-0" />
+                    Enabled
+                  </span>
+                ) : (
+                  <Badge variant="default">Disabled</Badge>
+                )}
               </td>
               <td>
                 <span className="text-label-medium text-subdued">{method.type}</span>
