@@ -202,7 +202,7 @@ export default function Home() {
               <td>
                 <span className="text-label-medium text-subdued truncate block">{method.popularIn}</span>
               </td>
-              <td>
+              <td className="pr-1">
                 <div className="flex items-center justify-end">
                   <div className="hidden group-hover:flex items-center">
                     {method.status === 'Disabled' && (
@@ -214,7 +214,7 @@ export default function Home() {
                       <Icon name="more" size="xsmall" />
                     </button>
                   </div>
-                  <button className="flex group-hover:hidden items-center justify-center text-icon-default">
+                  <button className="flex group-hover:hidden items-center justify-center w-6 h-6 text-icon-default">
                     <Icon name="more" size="xsmall" />
                   </button>
                 </div>
