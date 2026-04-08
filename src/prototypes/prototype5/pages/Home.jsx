@@ -96,34 +96,40 @@ export default function Home() {
       </p>
 
       {/* Filter tabs (All / Enabled / Disabled) */}
-      <div className="flex gap-3 mb-5">
+      <div className="flex gap-2 mb-4">
         {FILTER_TABS.map(tab => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`flex flex-col gap-1 px-4 py-2.5 rounded-lg border min-w-[200px] transition-colors text-left ${
+            className={`flex flex-col gap-1 flex-1 p-3 rounded-lg transition-colors text-left overflow-hidden ${
               activeTab === tab
-                ? 'border-brand bg-surface ring-1 ring-brand'
-                : 'border-border bg-surface hover:bg-offset'
+                ? 'border-[1.5px] border-brand bg-surface'
+                : 'border border-border bg-surface hover:bg-offset'
             }`}
           >
-            <span className={`text-label-small ${activeTab === tab ? 'text-brand' : 'text-subdued'}`}>
+            <span className={`text-label-medium ${activeTab === tab ? 'text-label-medium-emphasized text-brand' : 'text-subdued'}`}>
               {tab}
             </span>
-            <span className="text-heading-medium text-default">{counts[tab]}</span>
+            <span className={`text-label-large-emphasized ${activeTab === tab ? 'text-brand' : 'text-default'}`}>
+              {counts[tab]}
+            </span>
           </button>
         ))}
       </div>
 
       {/* Filter chips */}
-      <div className="flex gap-2 mb-5">
+      <div className="flex gap-2 mb-4">
         {FILTER_CHIPS.map(chip => (
           <button
             key={chip}
-            className="flex items-center gap-1 px-3 py-1.5 text-label-small text-subdued bg-surface border border-border rounded-full hover:bg-offset transition-colors"
+            className="flex items-center h-6 border border-dashed border-border rounded-full hover:bg-offset transition-colors"
           >
-            <Icon name="add" size="xsmall" className="text-subdued" />
-            {chip}
+            <span className="flex items-center justify-center pl-1.5">
+              <Icon name="addCircle" size="xsmall" className="text-subdued" />
+            </span>
+            <span className="text-label-small-emphasized text-subdued pl-1.5 pr-2">
+              {chip}
+            </span>
           </button>
         ))}
       </div>
