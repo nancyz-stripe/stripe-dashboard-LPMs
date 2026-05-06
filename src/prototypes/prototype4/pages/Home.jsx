@@ -256,13 +256,35 @@ function DrawerAccordionItem({ method, enabled, onToggle, expanded, onExpand }) 
   );
 }
 
-function ManageDrawer({ open, onClose }) {
-  const [methodStates, setMethodStates] = useState(() => {
-    const initial = {};
-    LOCAL_PAYMENT_METHODS.forEach((m) => { initial[m.id] = m.enabled; });
-    return initial;
-  });
+function Toast({ message, onDismiss }) {
+  useEffect(() => {
+    const timer = setTimeout(onDismiss, 4000);
+    return () => clearTimeout(timer);
+  }, [onDismiss]);
+
+  return createPortal(
+    <div className="fixed bottom-14 left-1/2 -translate-x-1/2 z-[300] flex items-center min-h-[44px] bg-[#273951] rounded-md shadow-[0px_15px_35px_0px_rgba(48,49,61,0.08),0px_5px_15px_0px_rgba(0,0,0,0.12)] overflow-hidden animate-[slideUp_0.25s_ease-out]">
+      <div className="flex items-center px-4 py-2">
+        <p className="text-label-medium text-white whitespace-nowrap">{message}</p>
+      </div>
+      <button
+        onClick={onDismiss}
+        className="flex items-center justify-center self-stretch w-[44px] shrink-0 border-l border-white/10 cursor-pointer hover:bg-white/5 transition-colors"
+      >
+        <Icon name="cancel" size="xxsmall" fill="white" />
+      </button>
+    </div>,
+    document.body
+  );
+}
+
+function ManageDrawer({ open, onClose, enabledMethods, onSave }) {
+  const [methodStates, setMethodStates] = useState(enabledMethods);
   const [expandedIds, setExpandedIds] = useState(new Set());
+
+  useEffect(() => {
+    if (open) setMethodStates(enabledMethods);
+  }, [open]);
 
   const handleToggle = (id) => {
     setMethodStates((prev) => ({ ...prev, [id]: !prev[id] }));
@@ -280,6 +302,10 @@ function ManageDrawer({ open, onClose }) {
     const updated = { ...methodStates };
     LOCAL_PAYMENT_METHODS.forEach((m) => { updated[m.id] = false; });
     setMethodStates(updated);
+  };
+
+  const handleSave = () => {
+    onSave(methodStates);
   };
 
   if (!open) return null;
@@ -346,7 +372,7 @@ function ManageDrawer({ open, onClose }) {
         {/* Footer */}
         <div className="flex items-center justify-end gap-3 px-4 py-4 border-t border-border">
           <Button variant="secondary" onClick={onClose}>Cancel</Button>
-          <Button variant="primary" onClick={onClose}>Save</Button>
+          <Button variant="primary" onClick={handleSave}>Save</Button>
         </div>
       </div>
     </div>,
@@ -397,6 +423,20 @@ export default function Home() {
   const [subscriptionAction, setSubscriptionAction] = useState('cancel the subscription');
   const [invoiceAction, setInvoiceAction] = useState('leave the invoice overdue');
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [toast, setToast] = useState(null);
+  const [enabledMethods, setEnabledMethods] = useState(() => {
+    const initial = {};
+    LOCAL_PAYMENT_METHODS.forEach((m) => { initial[m.id] = m.enabled; });
+    return initial;
+  });
+
+  const enabledLPMs = LOCAL_PAYMENT_METHODS.filter((m) => enabledMethods[m.id]);
+
+  const handleDrawerSave = (newStates) => {
+    setEnabledMethods(newStates);
+    setDrawerOpen(false);
+    setToast({ key: Date.now(), message: 'Subscription retry settings saved' });
+  };
 
   const subscriptionOptions = ['cancel the subscription', 'mark the subscription as unpaid', 'leave the subscription past due'];
   const invoiceOptions = ['leave the invoice overdue', 'mark the invoice as uncollectible', 'void the invoice'];
@@ -452,12 +492,16 @@ export default function Home() {
               <TableRow label="Local payment methods">
                 <div className="flex flex-col gap-3">
                   <div className="flex flex-col gap-2">
-                    <p className="text-label-medium text-default">Active on subscription payment retries</p>
-                    <div className="flex flex-wrap gap-1">
-                      <PaymentMethodPill icon="bank" label="ACH Direct Debit" />
-                      <PaymentMethodPill icon="bank" label="Canadian pre-authorized debits" />
-                      <PaymentMethodPill icon="bank" label="SEPA Direct Debit" />
-                    </div>
+                    <p className="text-label-medium text-default">
+                      {enabledLPMs.length > 0 ? 'Active on subscription payment retries' : 'No payment methods enabled'}
+                    </p>
+                    {enabledLPMs.length > 0 && (
+                      <div className="flex flex-wrap gap-1">
+                        {enabledLPMs.map((m) => (
+                          <PaymentMethodPill key={m.id} icon={m.icon} label={m.name} />
+                        ))}
+                      </div>
+                    )}
                   </div>
                   <button
                     onClick={() => setDrawerOpen(true)}
@@ -513,7 +557,16 @@ export default function Home() {
         <div className="text-subdued text-body-small">Automations content would go here.</div>
       )}
 
-      <ManageDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
+      <ManageDrawer
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        enabledMethods={enabledMethods}
+        onSave={handleDrawerSave}
+      />
+
+      {toast && (
+        <Toast key={toast.key} message={toast.message} onDismiss={() => setToast(null)} />
+      )}
     </div>
   );
 }
