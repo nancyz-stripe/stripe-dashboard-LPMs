@@ -1,7 +1,25 @@
 import { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { Tabs } from '../../../sail';
+import { Tabs, Button, Radio, Switch } from '../../../sail';
 import { Icon } from '../../../icons/SailIcons';
+
+const LOCAL_PAYMENT_METHODS = [
+  { id: 'ach', name: 'ACH Direct Debit', icon: 'bank', enabled: true, retryType: 'Custom retry', maxRetries: 2, description: 'Up to 2 retries in total.' },
+  { id: 'pad', name: 'Canadian pre-authorized debits', icon: 'bank', enabled: true, retryType: 'Smart retry', maxRetries: 2, description: 'Up to 2 retries in total, minimum invoice amount 10 EUR.' },
+  { id: 'sepa', name: 'SEPA Direct Debit', icon: 'bank', enabled: true, retryType: 'Custom retry', maxRetries: 2, description: 'Up to 2 retries in total, minimum invoice amount 10 EUR.' },
+  { id: 'bacs', name: 'Bacs Direct Debit', icon: 'bank', enabled: false, retryType: null, maxRetries: 2, description: 'Up to 2 retries in total.' },
+  { id: 'au-becs', name: 'Australia BECS Direct Debit', icon: 'bank', enabled: false, retryType: null, maxRetries: 2, description: 'Up to 2 retries in total.' },
+  { id: 'nz-becs', name: 'New Zealand BECS Direct Debit', icon: 'bank', enabled: false, retryType: null, maxRetries: 2, description: 'Up to 2 retries in total.' },
+];
+
+const CUSTOM_RETRY_DAY_OPTIONS = [
+  '2 days after the previous attempt',
+  '3 days after the previous attempt',
+  '5 days after the previous attempt',
+  '7 days after the previous attempt',
+  '9 days after the previous attempt',
+];
+const ORDINALS = ['1st', '2nd', '3rd', '4th', '5th'];
 
 function SelectMenu({ value, options, onChange }) {
   const [open, setOpen] = useState(false);
@@ -57,6 +75,258 @@ function SelectMenu({ value, options, onChange }) {
   );
 }
 
+function SelectMenuSmall({ value, options, onChange }) {
+  const [open, setOpen] = useState(false);
+  const btnRef = useRef(null);
+  const [pos, setPos] = useState(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const rect = btnRef.current.getBoundingClientRect();
+    setPos({ top: rect.bottom + 4, left: rect.left });
+  }, [open]);
+
+  return (
+    <>
+      <button
+        ref={btnRef}
+        onClick={() => setOpen(!open)}
+        className="inline-flex items-center gap-1.5 h-6 px-2 bg-surface border border-border rounded-md shadow-sm text-label-small-emphasized text-default cursor-pointer hover:bg-offset transition-colors"
+      >
+        <span className="truncate">{value}</span>
+        <Icon name="chevronDown" size="xxsmall" fill="currentColor" className="shrink-0" />
+      </button>
+      {open && pos && createPortal(
+        <>
+          <div className="fixed inset-0 z-[301]" onClick={() => setOpen(false)} />
+          <div
+            className="fixed z-[302] bg-surface border border-border rounded-lg shadow-lg overflow-hidden"
+            style={{ top: pos.top, left: pos.left }}
+          >
+            <div className="p-1">
+              {options.map((option) => (
+                <button
+                  key={option}
+                  onClick={() => { onChange(option); setOpen(false); }}
+                  className="flex items-center gap-1.5 w-full px-2.5 py-1.5 rounded text-label-small text-default hover:bg-offset transition-colors cursor-pointer text-left whitespace-nowrap"
+                >
+                  <span className="flex-1">{option}</span>
+                  {option === value && (
+                    <Icon name="checkCircleFilled" size="xxsmall" fill="currentColor" className="text-icon-default shrink-0" />
+                  )}
+                </button>
+              ))}
+            </div>
+          </div>
+        </>,
+        document.body
+      )}
+    </>
+  );
+}
+
+function CustomRetryControls({ maxRetries }) {
+  const [steps, setSteps] = useState([CUSTOM_RETRY_DAY_OPTIONS[0]]);
+
+  const addStep = () => {
+    if (steps.length < maxRetries) {
+      setSteps([...steps, CUSTOM_RETRY_DAY_OPTIONS[1]]);
+    }
+  };
+
+  const removeStep = (index) => {
+    setSteps(steps.filter((_, i) => i !== index));
+  };
+
+  const updateStep = (index, value) => {
+    const newSteps = [...steps];
+    newSteps[index] = value;
+    setSteps(newSteps);
+  };
+
+  return (
+    <div className="flex flex-col gap-2 pl-[22px]">
+      {steps.map((step, index) => (
+        <div key={index} className="flex items-center gap-2">
+          <span className="text-label-small text-subdued whitespace-nowrap">{ORDINALS[index]} retry</span>
+          <SelectMenuSmall value={step} options={CUSTOM_RETRY_DAY_OPTIONS} onChange={(val) => updateStep(index, val)} />
+          <button
+            onClick={() => removeStep(index)}
+            className="flex items-center justify-center size-5 rounded hover:bg-offset transition-colors cursor-pointer"
+          >
+            <Icon name="cancel" size="xxsmall" fill="currentColor" className="text-icon-subdued" />
+          </button>
+        </div>
+      ))}
+      {steps.length < maxRetries && (
+        <button
+          onClick={addStep}
+          className="flex items-center gap-1 text-label-small text-brand hover:underline cursor-pointer w-fit"
+        >
+          <Icon name="add" size="xxsmall" fill="currentColor" />
+          Add retry
+        </button>
+      )}
+    </div>
+  );
+}
+
+function DrawerAccordionItem({ method, enabled, onToggle, expanded, onExpand }) {
+  const [policy, setPolicy] = useState(method.retryType === 'Custom retry' ? 'custom' : 'smart');
+
+  return (
+    <div className="border-b border-border">
+      <div className="flex items-center gap-2 px-2 py-3">
+        <Switch checked={enabled} onChange={onToggle} />
+        <div className="flex items-center justify-center size-8 rounded bg-offset shrink-0">
+          <Icon name={method.icon} size="small" fill="currentColor" className="text-icon-subdued" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="text-label-medium-emphasized text-default">{method.name}</p>
+          {enabled && method.retryType && (
+            <p className="text-label-small text-subdued">{policy === 'custom' ? 'Custom retry' : 'Smart retry'}</p>
+          )}
+        </div>
+        <button
+          onClick={onExpand}
+          className="flex items-center justify-center size-7 rounded hover:bg-offset transition-colors cursor-pointer"
+        >
+          <Icon name={expanded ? 'chevronDown' : 'chevronRight'} size="xxsmall" fill="currentColor" className="text-icon-subdued" />
+        </button>
+      </div>
+
+      {expanded && (
+        <div className="px-4 pb-4">
+          <p className="text-label-small text-subdued pb-4">
+            {method.description}{' '}
+            <span className="text-brand cursor-pointer hover:underline">Learn more</span>
+          </p>
+
+          <div className="flex flex-col gap-3">
+            <label className="flex items-center gap-2 cursor-pointer">
+              <Radio
+                name={`${method.id}-drawer-policy`}
+                value="smart"
+                checked={policy === 'smart'}
+                onChange={() => setPolicy('smart')}
+              />
+              <span className="text-label-medium-emphasized text-default">Smart Retries for subscription</span>
+              <Icon name="info" size="xxsmall" fill="currentColor" className="text-icon-subdued" />
+            </label>
+
+            <label className="flex items-center gap-2 cursor-pointer">
+              <Radio
+                name={`${method.id}-drawer-policy`}
+                value="custom"
+                checked={policy === 'custom'}
+                onChange={() => setPolicy('custom')}
+              />
+              <span className="text-label-medium-emphasized text-default">Custom retry schedule for subscriptions</span>
+              <Icon name="info" size="xxsmall" fill="currentColor" className="text-icon-subdued" />
+            </label>
+
+            {policy === 'custom' && (
+              <CustomRetryControls maxRetries={method.maxRetries} />
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ManageDrawer({ open, onClose }) {
+  const [methodStates, setMethodStates] = useState(() => {
+    const initial = {};
+    LOCAL_PAYMENT_METHODS.forEach((m) => { initial[m.id] = m.enabled; });
+    return initial;
+  });
+  const [expandedId, setExpandedId] = useState(null);
+
+  const handleToggle = (id) => {
+    setMethodStates((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  const handleEnableAll = () => {
+    const updated = { ...methodStates };
+    LOCAL_PAYMENT_METHODS.forEach((m) => { updated[m.id] = true; });
+    setMethodStates(updated);
+  };
+
+  if (!open) return null;
+
+  return createPortal(
+    <div className="fixed inset-0 z-[250] flex">
+      {/* Backdrop */}
+      <div className="flex-1 bg-black/30" onClick={onClose} />
+
+      {/* Drawer panel */}
+      <div className="w-[480px] bg-surface flex flex-col shadow-xl animate-[slideInRight_0.2s_ease-out]">
+        {/* Header */}
+        <div className="flex items-center justify-between px-4 py-4 border-b border-border">
+          <h2 className="text-heading-small text-default">Manage subscription retries</h2>
+          <button
+            onClick={onClose}
+            className="flex items-center justify-center size-7 rounded hover:bg-offset transition-colors cursor-pointer"
+          >
+            <Icon name="cancel" size="xsmall" fill="currentColor" className="text-icon-subdued" />
+          </button>
+        </div>
+
+        {/* Content */}
+        <div className="flex-1 overflow-y-auto px-4 py-4">
+          <p className="text-label-medium text-subdued pb-4">
+            Set up automated recovery features that reduce and recover failed subscription payments.
+          </p>
+
+          {/* Filter chips */}
+          <div className="flex gap-2 pb-6">
+            <span className="inline-flex items-center gap-1 h-6 px-2 border border-border rounded-full text-label-small text-default">
+              <Icon name="add" size="xxsmall" fill="currentColor" className="text-icon-subdued" />
+              Payment method name
+            </span>
+            <span className="inline-flex items-center gap-1 h-6 px-2 border border-border rounded-full text-label-small text-default">
+              <Icon name="add" size="xxsmall" fill="currentColor" className="text-icon-subdued" />
+              Type
+            </span>
+            <span className="inline-flex items-center gap-1 h-6 px-2 border border-border rounded-full text-label-small text-default">
+              <Icon name="add" size="xxsmall" fill="currentColor" className="text-icon-subdued" />
+              Status
+            </span>
+          </div>
+
+          {/* Section header */}
+          <div className="flex items-center justify-between pb-3">
+            <p className="text-label-medium-emphasized text-default">Local payment methods</p>
+            <Button variant="secondary" size="sm" onClick={handleEnableAll}>Enable all</Button>
+          </div>
+
+          {/* Payment method list */}
+          <div className="border-t border-border">
+            {LOCAL_PAYMENT_METHODS.map((method) => (
+              <DrawerAccordionItem
+                key={method.id}
+                method={method}
+                enabled={methodStates[method.id]}
+                onToggle={() => handleToggle(method.id)}
+                expanded={expandedId === method.id}
+                onExpand={() => setExpandedId(expandedId === method.id ? null : method.id)}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="flex items-center justify-end gap-3 px-4 py-4 border-t border-border">
+          <Button variant="secondary" onClick={onClose}>Cancel</Button>
+          <Button variant="primary" onClick={onClose}>Save</Button>
+        </div>
+      </div>
+    </div>,
+    document.body
+  );
+}
+
 function PaymentMethodPill({ icon, label }) {
   return (
     <span className="inline-flex items-center gap-1 border border-border rounded-full px-2 py-1">
@@ -99,6 +369,7 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState('retries');
   const [subscriptionAction, setSubscriptionAction] = useState('cancel the subscription');
   const [invoiceAction, setInvoiceAction] = useState('leave the invoice overdue');
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   const subscriptionOptions = ['cancel the subscription', 'mark the subscription as unpaid', 'leave the subscription past due'];
   const invoiceOptions = ['leave the invoice overdue', 'mark the invoice as uncollectible', 'void the invoice'];
@@ -161,7 +432,12 @@ export default function Home() {
                       <PaymentMethodPill icon="bank" label="SEPA Direct Debit" />
                     </div>
                   </div>
-                  <a href="#" className="text-label-medium text-brand hover:underline w-fit">Manage</a>
+                  <button
+                    onClick={() => setDrawerOpen(true)}
+                    className="text-label-medium text-brand hover:underline w-fit cursor-pointer"
+                  >
+                    Manage
+                  </button>
                 </div>
               </TableRow>
 
@@ -209,6 +485,8 @@ export default function Home() {
       {activeTab === 'automations' && (
         <div className="text-subdued text-body-small">Automations content would go here.</div>
       )}
+
+      <ManageDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
     </div>
   );
 }
