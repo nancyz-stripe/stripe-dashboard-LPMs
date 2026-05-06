@@ -4,7 +4,6 @@ import { BasePathContext } from '../../contexts/BasePath';
 import { Sidebar } from '../../sail/Sidebar';
 import { Header, SandboxBanner, SANDBOX_HEIGHT } from '../../sail/Header';
 import { Workbench, WORKBENCH_BAR_HEIGHT } from '../../sail';
-import ControlPanel from './ControlPanel';
 import SidebarNav from './SidebarNav';
 import HeaderNav from './HeaderNav';
 import Home from './pages/Home';
@@ -16,8 +15,6 @@ export default function Prototype4App({ basePath = '' }) {
   return (
     <BasePathContext.Provider value={basePath}>
       <div className="min-h-screen bg-surface">
-        <ControlPanel />
-
         <div className="flex flex-col min-h-screen">
           <div className="flex flex-row flex-1 bg-surface">
             <Sidebar mobileMenuOpen={mobileMenuOpen} onClose={() => setMobileMenuOpen(false)}>
