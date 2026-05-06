@@ -7,7 +7,7 @@ const LOCAL_PAYMENT_METHODS = [
   { id: 'ach', name: 'ACH Direct Debit', icon: 'bank', enabled: true, retryType: 'Custom retry', maxRetries: 2, description: 'Up to 2 retries in total.' },
   { id: 'au-becs', name: 'Australia BECS Direct Debit', icon: 'bank', enabled: false, retryType: null, maxRetries: 2, description: 'Up to 2 retries in total.' },
   { id: 'bacs', name: 'Bacs Direct Debit', icon: 'bank', enabled: false, retryType: null, maxRetries: 2, description: 'Up to 2 retries in total.' },
-  { id: 'pad', name: 'Canadian pre-authorized debits', icon: 'bank', enabled: true, retryType: 'Smart retry', maxRetries: 2, description: 'Up to 2 retries in total, minimum invoice amount 10 EUR.' },
+  { id: 'pad', name: 'Canadian pre-authorized debits', icon: 'bank', enabled: true, retryType: 'Automatic retry', maxRetries: 2, description: 'Up to 2 retries in total, minimum invoice amount 10 EUR.' },
   { id: 'nz-becs', name: 'New Zealand BECS Direct Debit', icon: 'bank', enabled: false, retryType: null, maxRetries: 2, description: 'Up to 2 retries in total.' },
   { id: 'sepa', name: 'SEPA Direct Debit', icon: 'bank', enabled: true, retryType: 'Custom retry', maxRetries: 2, description: 'Up to 2 retries in total, minimum invoice amount 10 EUR.' },
 ];
@@ -172,7 +172,7 @@ function CustomRetryControls({ maxRetries }) {
 }
 
 function DrawerAccordionItem({ method, enabled, onToggle, expanded, onExpand }) {
-  const [policy, setPolicy] = useState(method.retryType === 'Custom retry' ? 'custom' : 'smart');
+  const [policy, setPolicy] = useState(method.retryType === 'Custom retry' ? 'custom' : 'automatic');
 
   return (
     <div className="border-b border-border">
@@ -189,7 +189,7 @@ function DrawerAccordionItem({ method, enabled, onToggle, expanded, onExpand }) 
         <div className="flex-1 min-w-0">
           <p className="text-label-medium-emphasized text-default">{method.name}</p>
           {enabled && method.retryType && (
-            <p className="text-label-small text-subdued">{policy === 'custom' ? 'Custom retry' : 'Smart retry'}</p>
+            <p className="text-label-small text-subdued">{policy === 'custom' ? 'Custom retry' : 'Automatic retry'}</p>
           )}
         </div>
         <Icon name={expanded ? 'chevronDown' : 'chevronRight'} size="xxsmall" fill="currentColor" className="text-icon-subdued" />
@@ -206,11 +206,11 @@ function DrawerAccordionItem({ method, enabled, onToggle, expanded, onExpand }) 
             <label className="flex items-center gap-2 cursor-pointer">
               <Radio
                 name={`${method.id}-drawer-policy`}
-                value="smart"
-                checked={policy === 'smart'}
-                onChange={() => setPolicy('smart')}
+                value="automatic"
+                checked={policy === 'automatic'}
+                onChange={() => setPolicy('automatic')}
               />
-              <span className="text-label-medium-emphasized text-default">Smart Retries for subscription</span>
+              <span className="text-label-medium-emphasized text-default">Automatic retries for subscription</span>
               <Icon name="info" size="xxsmall" fill="currentColor" className="text-icon-subdued" />
             </label>
 
