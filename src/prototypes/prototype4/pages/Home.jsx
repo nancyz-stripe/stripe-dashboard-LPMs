@@ -176,8 +176,13 @@ function DrawerAccordionItem({ method, enabled, onToggle, expanded, onExpand }) 
 
   return (
     <div className="border-b border-border">
-      <div className="flex items-center gap-2 px-2 py-3">
-        <Switch checked={enabled} onChange={onToggle} />
+      <div
+        className="flex items-center gap-2 px-2 py-3 cursor-pointer hover:bg-offset/50 transition-colors"
+        onClick={onExpand}
+      >
+        <div onClick={(e) => e.stopPropagation()}>
+          <Switch checked={enabled} onChange={onToggle} />
+        </div>
         <div className="flex items-center justify-center size-8 rounded bg-offset shrink-0">
           <Icon name={method.icon} size="small" fill="currentColor" className="text-icon-subdued" />
         </div>
@@ -187,12 +192,7 @@ function DrawerAccordionItem({ method, enabled, onToggle, expanded, onExpand }) 
             <p className="text-label-small text-subdued">{policy === 'custom' ? 'Custom retry' : 'Smart retry'}</p>
           )}
         </div>
-        <button
-          onClick={onExpand}
-          className="flex items-center justify-center size-7 rounded hover:bg-offset transition-colors cursor-pointer"
-        >
-          <Icon name={expanded ? 'chevronDown' : 'chevronRight'} size="xxsmall" fill="currentColor" className="text-icon-subdued" />
-        </button>
+        <Icon name={expanded ? 'chevronDown' : 'chevronRight'} size="xxsmall" fill="currentColor" className="text-icon-subdued" />
       </div>
 
       {expanded && (
