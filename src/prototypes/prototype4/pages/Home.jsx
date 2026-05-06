@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, Fragment } from 'react';
 import { createPortal } from 'react-dom';
 import { Tabs, Button, Radio, Switch, Chip, Tooltip } from '../../../sail';
 import { Icon } from '../../../icons/SailIcons';
@@ -146,18 +146,20 @@ function CustomRetryControls({ maxRetries }) {
 
   return (
     <div className="flex flex-col gap-2 pl-[22px]">
-      {steps.map((step, index) => (
-        <div key={index} className="flex items-center gap-2">
-          <span className="text-label-small text-subdued whitespace-nowrap">{ORDINALS[index]} retry</span>
-          <SelectMenuSmall value={step} options={CUSTOM_RETRY_DAY_OPTIONS} onChange={(val) => updateStep(index, val)} />
-          <button
-            onClick={() => removeStep(index)}
-            className="flex items-center justify-center size-5 rounded hover:bg-offset transition-colors cursor-pointer"
-          >
-            <Icon name="cancel" size="xxsmall" fill="currentColor" className="text-icon-subdued" />
-          </button>
-        </div>
-      ))}
+      <div className="grid grid-cols-[auto_1fr_auto] gap-x-2 gap-y-2 items-center">
+        {steps.map((step, index) => (
+          <Fragment key={index}>
+            <span className="text-label-small text-subdued whitespace-nowrap">{ORDINALS[index]} retry</span>
+            <SelectMenuSmall value={step} options={CUSTOM_RETRY_DAY_OPTIONS} onChange={(val) => updateStep(index, val)} />
+            <button
+              onClick={() => removeStep(index)}
+              className="flex items-center justify-center size-5 rounded hover:bg-offset transition-colors cursor-pointer"
+            >
+              <Icon name="cancel" size="xxsmall" fill="currentColor" className="text-icon-subdued" />
+            </button>
+          </Fragment>
+        ))}
+      </div>
       {steps.length < maxRetries && (
         <button
           onClick={addStep}
