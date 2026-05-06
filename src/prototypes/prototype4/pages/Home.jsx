@@ -174,7 +174,7 @@ function CustomRetryControls({ maxRetries }) {
 }
 
 function DrawerAccordionItem({ method, enabled, onToggle, expanded, onExpand }) {
-  const [policy, setPolicy] = useState(method.retryType === 'Custom retry' ? 'custom' : 'automatic');
+  const [policy, setPolicy] = useState('automatic');
 
   return (
     <div className="border-b border-border">
@@ -190,7 +190,7 @@ function DrawerAccordionItem({ method, enabled, onToggle, expanded, onExpand }) 
         </div>
         <div className="flex-1 min-w-0">
           <p className="text-label-medium-emphasized text-default">{method.name}</p>
-          {enabled && method.retryType && (
+          {enabled && (
             <p className="text-label-small text-subdued">{policy === 'custom' ? 'Custom retry' : 'Automatic retry'}</p>
           )}
         </div>
