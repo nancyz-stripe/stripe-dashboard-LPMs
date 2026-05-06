@@ -587,7 +587,6 @@ function LPMDrawer({ open, onClose, enabledMethods, onSave }) {
             <TypeFilterDropdown ref={ref} anchorRef={anchorRef} onClose={onClose} value={typeFilter} onChange={setTypeFilter} />
           )}
         />
-        <Chip label="Status" size="sm" renderDropdown={() => null} />
       </div>
 
       {/* Section header */}
