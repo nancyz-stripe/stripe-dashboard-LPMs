@@ -278,7 +278,142 @@ function Toast({ message, onDismiss }) {
   );
 }
 
-function ManageDrawer({ open, onClose, enabledMethods, onSave }) {
+const SMART_RETRY_TIMES = ['4 times', '8 times'];
+const SMART_RETRY_DURATIONS = ['1 week', '2 weeks', '3 weeks', '1 month', '2 months'];
+
+function DrawerShell({ open, onClose, children, onSave, saveDisabled }) {
+  if (!open) return null;
+
+  return createPortal(
+    <div className="fixed inset-0 z-[250] flex">
+      <div className="flex-1 bg-black/30" onClick={onClose} />
+      <div className="w-[480px] bg-surface flex flex-col shadow-xl animate-[slideInRight_0.2s_ease-out]">
+        <div className="flex items-center justify-between px-4 py-4 border-b border-border">
+          <h2 className="text-heading-small text-default">Manage subscription retries</h2>
+          <button
+            onClick={onClose}
+            className="flex items-center justify-center size-7 rounded hover:bg-offset transition-colors cursor-pointer"
+          >
+            <Icon name="cancel" size="xsmall" fill="currentColor" className="text-icon-subdued" />
+          </button>
+        </div>
+        <div className="flex-1 overflow-y-auto px-4 py-4">
+          <p className="text-label-medium text-subdued pb-4">
+            Set up automated recovery features that reduce and recover failed subscription payments.
+          </p>
+          {children}
+        </div>
+        <div className="flex items-center justify-end gap-3 px-4 py-4 border-t border-border">
+          <Button variant="secondary" onClick={onClose}>Cancel</Button>
+          <Button variant="primary" onClick={onSave} disabled={saveDisabled}>Save</Button>
+        </div>
+      </div>
+    </div>,
+    document.body
+  );
+}
+
+function CardDrawer({ open, onClose, onSave }) {
+  const [expanded, setExpanded] = useState(true);
+  const [policy, setPolicy] = useState('smart');
+  const [smartTimes, setSmartTimes] = useState('8 times');
+  const [smartDuration, setSmartDuration] = useState('1 month');
+  const [hasChanges, setHasChanges] = useState(false);
+
+  const markChanged = () => setHasChanges(true);
+
+  useEffect(() => {
+    if (open) setHasChanges(false);
+  }, [open]);
+
+  return (
+    <DrawerShell open={open} onClose={onClose} onSave={() => { onSave(); }} saveDisabled={!hasChanges}>
+      {/* Section header */}
+      <div className="pb-3">
+        <p className="text-label-medium-emphasized text-default">Card payment retries</p>
+      </div>
+
+      {/* Card item */}
+      <div className="border-t border-border">
+        <div
+          className="flex items-center gap-2 px-2 py-3 cursor-pointer hover:bg-offset/50 transition-colors"
+          onClick={() => setExpanded(!expanded)}
+        >
+          <div className="flex items-center justify-center size-8 rounded bg-offset shrink-0">
+            <Icon name="card" size="small" fill="currentColor" className="text-icon-subdued" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-label-medium-emphasized text-default">Cards</p>
+            <p className="text-label-small text-subdued">{policy === 'smart' ? 'Smart retry' : 'Custom retry'}</p>
+          </div>
+          <Icon name={expanded ? 'chevronDown' : 'chevronRight'} size="xxsmall" fill="currentColor" className="text-icon-subdued" />
+        </div>
+
+        {expanded && (
+          <div className="px-4 pb-4">
+            <div className="flex flex-col gap-3">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <Radio
+                  name="card-drawer-policy"
+                  value="smart"
+                  checked={policy === 'smart'}
+                  onChange={() => { setPolicy('smart'); markChanged(); }}
+                />
+                <span className="text-label-medium-emphasized text-default">Smart Retries for subscription</span>
+                <Tooltip
+                  placement="bottom"
+                  content={
+                    <span className="text-label-medium text-default">
+                      Retry failed payments at the optimal times, powered by Stripe's machine learning. Stripe's recommended default setting is up to 8 retries within 2 weeks.{' '}
+                      <a href="https://docs.stripe.com/invoicing/automatic-collection#smart-retries" target="_blank" className="text-brand hover:underline">Learn more</a>
+                    </span>
+                  }
+                >
+                  <Icon name="info" size="xxsmall" fill="currentColor" className="text-icon-subdued cursor-help" />
+                </Tooltip>
+              </label>
+
+              {policy === 'smart' && (
+                <div className="flex items-center gap-2 pl-[22px]">
+                  <span className="text-label-small text-subdued">Retry up to</span>
+                  <SelectMenuSmall value={smartTimes} options={SMART_RETRY_TIMES} onChange={(v) => { setSmartTimes(v); markChanged(); }} />
+                  <span className="text-label-small text-subdued">within</span>
+                  <SelectMenuSmall value={smartDuration} options={SMART_RETRY_DURATIONS} onChange={(v) => { setSmartDuration(v); markChanged(); }} />
+                </div>
+              )}
+
+              <label className="flex items-center gap-2 cursor-pointer">
+                <Radio
+                  name="card-drawer-policy"
+                  value="custom"
+                  checked={policy === 'custom'}
+                  onChange={() => { setPolicy('custom'); markChanged(); }}
+                />
+                <span className="text-label-medium-emphasized text-default">Custom retry schedule for subscriptions</span>
+                <Tooltip
+                  placement="bottom"
+                  content={
+                    <span className="text-label-medium text-default">
+                      Manually configure failed payment retries until they succeed.
+                    </span>
+                  }
+                >
+                  <Icon name="info" size="xxsmall" fill="currentColor" className="text-icon-subdued cursor-help" />
+                </Tooltip>
+              </label>
+
+              {policy === 'custom' && (
+                <CustomRetryControls maxRetries={3} />
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+    </DrawerShell>
+  );
+}
+
+function LPMDrawer({ open, onClose, enabledMethods, onSave }) {
   const [methodStates, setMethodStates] = useState(enabledMethods);
   const [expandedIds, setExpandedIds] = useState(new Set());
 
@@ -306,79 +441,42 @@ function ManageDrawer({ open, onClose, enabledMethods, onSave }) {
 
   const hasChanges = LOCAL_PAYMENT_METHODS.some((m) => methodStates[m.id] !== enabledMethods[m.id]);
 
-  const handleSave = () => {
-    onSave(methodStates);
-  };
-
-  if (!open) return null;
-
-  return createPortal(
-    <div className="fixed inset-0 z-[250] flex">
-      {/* Backdrop */}
-      <div className="flex-1 bg-black/30" onClick={onClose} />
-
-      {/* Drawer panel */}
-      <div className="w-[480px] bg-surface flex flex-col shadow-xl animate-[slideInRight_0.2s_ease-out]">
-        {/* Header */}
-        <div className="flex items-center justify-between px-4 py-4 border-b border-border">
-          <h2 className="text-heading-small text-default">Manage subscription retries</h2>
-          <button
-            onClick={onClose}
-            className="flex items-center justify-center size-7 rounded hover:bg-offset transition-colors cursor-pointer"
-          >
-            <Icon name="cancel" size="xsmall" fill="currentColor" className="text-icon-subdued" />
-          </button>
-        </div>
-
-        {/* Content */}
-        <div className="flex-1 overflow-y-auto px-4 py-4">
-          <p className="text-label-medium text-subdued pb-4">
-            Set up automated recovery features that reduce and recover failed subscription payments.
-          </p>
-
-          {/* Filter chips */}
-          <div className="flex gap-2 pb-6">
-            <Chip label="Payment method name" size="sm" renderDropdown={() => null} />
-            <Chip label="Type" size="sm" renderDropdown={() => null} />
-            <Chip label="Status" size="sm" renderDropdown={() => null} />
-          </div>
-
-          {/* Section header */}
-          <div className="flex items-center justify-between pb-3">
-            <p className="text-label-medium-emphasized text-default">Local payment methods</p>
-            <Button variant="secondary" size="sm" onClick={allEnabled ? handleDisableAll : handleEnableAll}>
-              {allEnabled ? 'Disable all' : 'Enable all'}
-            </Button>
-          </div>
-
-          {/* Payment method list */}
-          <div className="border-t border-border">
-            {LOCAL_PAYMENT_METHODS.map((method) => (
-              <DrawerAccordionItem
-                key={method.id}
-                method={method}
-                enabled={methodStates[method.id]}
-                onToggle={() => handleToggle(method.id)}
-                expanded={expandedIds.has(method.id)}
-                onExpand={() => setExpandedIds((prev) => {
-                  const next = new Set(prev);
-                  if (next.has(method.id)) next.delete(method.id);
-                  else next.add(method.id);
-                  return next;
-                })}
-              />
-            ))}
-          </div>
-        </div>
-
-        {/* Footer */}
-        <div className="flex items-center justify-end gap-3 px-4 py-4 border-t border-border">
-          <Button variant="secondary" onClick={onClose}>Cancel</Button>
-          <Button variant="primary" onClick={handleSave} disabled={!hasChanges}>Save</Button>
-        </div>
+  return (
+    <DrawerShell open={open} onClose={onClose} onSave={() => onSave(methodStates)} saveDisabled={!hasChanges}>
+      {/* Filter chips */}
+      <div className="flex gap-2 pb-6">
+        <Chip label="Payment method name" size="sm" renderDropdown={() => null} />
+        <Chip label="Type" size="sm" renderDropdown={() => null} />
+        <Chip label="Status" size="sm" renderDropdown={() => null} />
       </div>
-    </div>,
-    document.body
+
+      {/* Section header */}
+      <div className="flex items-center justify-between pb-3">
+        <p className="text-label-medium-emphasized text-default">Local payment methods</p>
+        <Button variant="secondary" size="sm" onClick={allEnabled ? handleDisableAll : handleEnableAll}>
+          {allEnabled ? 'Disable all' : 'Enable all'}
+        </Button>
+      </div>
+
+      {/* Payment method list */}
+      <div className="border-t border-border">
+        {LOCAL_PAYMENT_METHODS.map((method) => (
+          <DrawerAccordionItem
+            key={method.id}
+            method={method}
+            enabled={methodStates[method.id]}
+            onToggle={() => handleToggle(method.id)}
+            expanded={expandedIds.has(method.id)}
+            onExpand={() => setExpandedIds((prev) => {
+              const next = new Set(prev);
+              if (next.has(method.id)) next.delete(method.id);
+              else next.add(method.id);
+              return next;
+            })}
+          />
+        ))}
+      </div>
+    </DrawerShell>
   );
 }
 
@@ -424,7 +522,8 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState('retries');
   const [subscriptionAction, setSubscriptionAction] = useState('cancel the subscription');
   const [invoiceAction, setInvoiceAction] = useState('leave the invoice overdue');
-  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [lpmDrawerOpen, setLpmDrawerOpen] = useState(false);
+  const [cardDrawerOpen, setCardDrawerOpen] = useState(false);
   const [toast, setToast] = useState(null);
   const [enabledMethods, setEnabledMethods] = useState(() => {
     const initial = {};
@@ -434,9 +533,14 @@ export default function Home() {
 
   const enabledLPMs = LOCAL_PAYMENT_METHODS.filter((m) => enabledMethods[m.id]);
 
-  const handleDrawerSave = (newStates) => {
+  const handleLpmDrawerSave = (newStates) => {
     setEnabledMethods(newStates);
-    setDrawerOpen(false);
+    setLpmDrawerOpen(false);
+    setToast({ key: Date.now(), message: 'Subscription retry settings are saved' });
+  };
+
+  const handleCardDrawerSave = () => {
+    setCardDrawerOpen(false);
     setToast({ key: Date.now(), message: 'Subscription retry settings are saved' });
   };
 
@@ -486,7 +590,12 @@ export default function Home() {
                       <PaymentMethodPill icon="card" label="Cards" />
                     </div>
                   </div>
-                  <a href="#" className="text-label-medium text-brand w-fit">Manage</a>
+                  <button
+                    onClick={() => setCardDrawerOpen(true)}
+                    className="text-label-medium text-brand w-fit cursor-pointer"
+                  >
+                    Manage
+                  </button>
                 </div>
               </TableRow>
 
@@ -506,7 +615,7 @@ export default function Home() {
                     )}
                   </div>
                   <button
-                    onClick={() => setDrawerOpen(true)}
+                    onClick={() => setLpmDrawerOpen(true)}
                     className="text-label-medium text-brand w-fit cursor-pointer"
                   >
                     Manage
@@ -559,11 +668,17 @@ export default function Home() {
         <div className="text-subdued text-body-small">Automations content would go here.</div>
       )}
 
-      <ManageDrawer
-        open={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
+      <CardDrawer
+        open={cardDrawerOpen}
+        onClose={() => setCardDrawerOpen(false)}
+        onSave={handleCardDrawerSave}
+      />
+
+      <LPMDrawer
+        open={lpmDrawerOpen}
+        onClose={() => setLpmDrawerOpen(false)}
         enabledMethods={enabledMethods}
-        onSave={handleDrawerSave}
+        onSave={handleLpmDrawerSave}
       />
 
       {toast && (
