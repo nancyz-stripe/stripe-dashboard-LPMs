@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { Tabs, Button, Radio, Switch, Chip } from '../../../sail';
+import { Tabs, Button, Radio, Switch, Chip, Tooltip } from '../../../sail';
 import { Icon } from '../../../icons/SailIcons';
 
 const LOCAL_PAYMENT_METHODS = [
@@ -211,7 +211,17 @@ function DrawerAccordionItem({ method, enabled, onToggle, expanded, onExpand }) 
                 onChange={() => setPolicy('automatic')}
               />
               <span className="text-label-medium-emphasized text-default">Automatic retries for subscription</span>
-              <Icon name="info" size="xxsmall" fill="currentColor" className="text-icon-subdued" />
+              <Tooltip
+                placement="bottom"
+                content={
+                  <span className="text-label-medium text-default">
+                    Retry failed payments at the optimal times, powered by Stripe's machine learning. Stripe's recommended default setting is up to 8 retries within 2 weeks.{' '}
+                    <a href="https://docs.stripe.com/invoicing/automatic-collection#smart-retries" target="_blank" className="text-brand hover:underline">Learn more</a>
+                  </span>
+                }
+              >
+                <Icon name="info" size="xxsmall" fill="currentColor" className="text-icon-subdued cursor-help" />
+              </Tooltip>
             </label>
 
             <label className="flex items-center gap-2 cursor-pointer">
@@ -222,7 +232,16 @@ function DrawerAccordionItem({ method, enabled, onToggle, expanded, onExpand }) 
                 onChange={() => setPolicy('custom')}
               />
               <span className="text-label-medium-emphasized text-default">Custom retry schedule for subscriptions</span>
-              <Icon name="info" size="xxsmall" fill="currentColor" className="text-icon-subdued" />
+              <Tooltip
+                placement="bottom"
+                content={
+                  <span className="text-label-medium text-default">
+                    Manually configure failed payment retries until they succeed.
+                  </span>
+                }
+              >
+                <Icon name="info" size="xxsmall" fill="currentColor" className="text-icon-subdued cursor-help" />
+              </Tooltip>
             </label>
 
             {policy === 'custom' && (
