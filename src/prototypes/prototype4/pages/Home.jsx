@@ -314,7 +314,6 @@ function DrawerShell({ open, onClose, children, onSave, saveDisabled }) {
 }
 
 function CardDrawer({ open, onClose, onSave }) {
-  const [expanded, setExpanded] = useState(true);
   const [policy, setPolicy] = useState('smart');
   const [smartTimes, setSmartTimes] = useState('8 times');
   const [smartDuration, setSmartDuration] = useState('1 month');
@@ -333,12 +332,9 @@ function CardDrawer({ open, onClose, onSave }) {
         <p className="text-label-medium-emphasized text-default">Card payment retries</p>
       </div>
 
-      {/* Card item */}
+      {/* Card item — static, always visible */}
       <div className="border-t border-border">
-        <div
-          className="flex items-center gap-2 px-2 py-3 cursor-pointer hover:bg-offset/50 transition-colors"
-          onClick={() => setExpanded(!expanded)}
-        >
+        <div className="flex items-center gap-2 px-2 py-3">
           <div className="flex items-center justify-center size-8 rounded bg-offset shrink-0">
             <Icon name="card" size="small" fill="currentColor" className="text-icon-subdued" />
           </div>
@@ -346,68 +342,65 @@ function CardDrawer({ open, onClose, onSave }) {
             <p className="text-label-medium-emphasized text-default">Cards</p>
             <p className="text-label-small text-subdued">{policy === 'smart' ? 'Smart retry' : 'Custom retry'}</p>
           </div>
-          <Icon name={expanded ? 'chevronDown' : 'chevronRight'} size="xxsmall" fill="currentColor" className="text-icon-subdued" />
         </div>
 
-        {expanded && (
-          <div className="px-4 pb-4">
-            <div className="flex flex-col gap-3">
-              <label className="flex items-center gap-2 cursor-pointer">
-                <Radio
-                  name="card-drawer-policy"
-                  value="smart"
-                  checked={policy === 'smart'}
-                  onChange={() => { setPolicy('smart'); markChanged(); }}
-                />
-                <span className="text-label-medium-emphasized text-default">Smart Retries for subscription</span>
-                <Tooltip
-                  placement="bottom"
-                  content={
-                    <span className="text-label-medium text-default">
-                      Retry failed payments at the optimal times, powered by Stripe's machine learning. Stripe's recommended default setting is up to 8 retries within 2 weeks.{' '}
-                      <a href="https://docs.stripe.com/invoicing/automatic-collection#smart-retries" target="_blank" className="text-brand hover:underline">Learn more</a>
-                    </span>
-                  }
-                >
-                  <Icon name="info" size="xxsmall" fill="currentColor" className="text-icon-subdued cursor-help" />
-                </Tooltip>
-              </label>
+        <div className="px-4 pb-4">
+          <div className="flex flex-col gap-3">
+            <label className="flex items-center gap-2 cursor-pointer">
+              <Radio
+                name="card-drawer-policy"
+                value="smart"
+                checked={policy === 'smart'}
+                onChange={() => { setPolicy('smart'); markChanged(); }}
+              />
+              <span className="text-label-medium-emphasized text-default">Smart Retries for subscription</span>
+              <Tooltip
+                placement="bottom"
+                content={
+                  <span className="text-label-medium text-default">
+                    Retry failed payments at the optimal times, powered by Stripe's machine learning. Stripe's recommended default setting is up to 8 retries within 2 weeks.{' '}
+                    <a href="https://docs.stripe.com/invoicing/automatic-collection#smart-retries" target="_blank" className="text-brand hover:underline">Learn more</a>
+                  </span>
+                }
+              >
+                <Icon name="info" size="xxsmall" fill="currentColor" className="text-icon-subdued cursor-help" />
+              </Tooltip>
+            </label>
 
-              {policy === 'smart' && (
-                <div className="flex items-center gap-2 pl-[22px]">
-                  <span className="text-label-small text-subdued">Retry up to</span>
-                  <SelectMenuSmall value={smartTimes} options={SMART_RETRY_TIMES} onChange={(v) => { setSmartTimes(v); markChanged(); }} />
-                  <span className="text-label-small text-subdued">within</span>
-                  <SelectMenuSmall value={smartDuration} options={SMART_RETRY_DURATIONS} onChange={(v) => { setSmartDuration(v); markChanged(); }} />
-                </div>
-              )}
+            {policy === 'smart' && (
+              <div className="flex items-center gap-2 pl-[22px]">
+                <span className="text-label-small text-subdued">Retry up to</span>
+                <SelectMenuSmall value={smartTimes} options={SMART_RETRY_TIMES} onChange={(v) => { setSmartTimes(v); markChanged(); }} />
+                <span className="text-label-small text-subdued">within</span>
+                <SelectMenuSmall value={smartDuration} options={SMART_RETRY_DURATIONS} onChange={(v) => { setSmartDuration(v); markChanged(); }} />
+              </div>
+            )}
 
-              <label className="flex items-center gap-2 cursor-pointer">
-                <Radio
-                  name="card-drawer-policy"
-                  value="custom"
-                  checked={policy === 'custom'}
-                  onChange={() => { setPolicy('custom'); markChanged(); }}
-                />
-                <span className="text-label-medium-emphasized text-default">Custom retry schedule for subscriptions</span>
-                <Tooltip
-                  placement="bottom"
-                  content={
-                    <span className="text-label-medium text-default">
-                      Manually configure failed payment retries until they succeed.
-                    </span>
-                  }
-                >
-                  <Icon name="info" size="xxsmall" fill="currentColor" className="text-icon-subdued cursor-help" />
-                </Tooltip>
-              </label>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <Radio
+                name="card-drawer-policy"
+                value="custom"
+                checked={policy === 'custom'}
+                onChange={() => { setPolicy('custom'); markChanged(); }}
+              />
+              <span className="text-label-medium-emphasized text-default">Custom retry schedule for subscriptions</span>
+              <Tooltip
+                placement="bottom"
+                content={
+                  <span className="text-label-medium text-default">
+                    Manually configure failed payment retries until they succeed.
+                  </span>
+                }
+              >
+                <Icon name="info" size="xxsmall" fill="currentColor" className="text-icon-subdued cursor-help" />
+              </Tooltip>
+            </label>
 
-              {policy === 'custom' && (
-                <CustomRetryControls maxRetries={3} />
-              )}
-            </div>
+            {policy === 'custom' && (
+              <CustomRetryControls maxRetries={3} />
+            )}
           </div>
-        )}
+        </div>
       </div>
     </DrawerShell>
   );
