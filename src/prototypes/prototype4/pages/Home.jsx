@@ -268,9 +268,17 @@ function ManageDrawer({ open, onClose }) {
     setMethodStates((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
+  const allEnabled = LOCAL_PAYMENT_METHODS.every((m) => methodStates[m.id]);
+
   const handleEnableAll = () => {
     const updated = { ...methodStates };
     LOCAL_PAYMENT_METHODS.forEach((m) => { updated[m.id] = true; });
+    setMethodStates(updated);
+  };
+
+  const handleDisableAll = () => {
+    const updated = { ...methodStates };
+    LOCAL_PAYMENT_METHODS.forEach((m) => { updated[m.id] = false; });
     setMethodStates(updated);
   };
 
@@ -310,7 +318,9 @@ function ManageDrawer({ open, onClose }) {
           {/* Section header */}
           <div className="flex items-center justify-between pb-3">
             <p className="text-label-medium-emphasized text-default">Local payment methods</p>
-            <Button variant="secondary" size="sm" onClick={handleEnableAll}>Enable all</Button>
+            <Button variant="secondary" size="sm" onClick={allEnabled ? handleDisableAll : handleEnableAll}>
+              {allEnabled ? 'Disable all' : 'Enable all'}
+            </Button>
           </div>
 
           {/* Payment method list */}
