@@ -260,7 +260,7 @@ function ManageDrawer({ open, onClose }) {
     LOCAL_PAYMENT_METHODS.forEach((m) => { initial[m.id] = m.enabled; });
     return initial;
   });
-  const [expandedId, setExpandedId] = useState(null);
+  const [expandedIds, setExpandedIds] = useState(new Set());
 
   const handleToggle = (id) => {
     setMethodStates((prev) => ({ ...prev, [id]: !prev[id] }));
@@ -319,8 +319,13 @@ function ManageDrawer({ open, onClose }) {
                 method={method}
                 enabled={methodStates[method.id]}
                 onToggle={() => handleToggle(method.id)}
-                expanded={expandedId === method.id}
-                onExpand={() => setExpandedId(expandedId === method.id ? null : method.id)}
+                expanded={expandedIds.has(method.id)}
+                onExpand={() => setExpandedIds((prev) => {
+                  const next = new Set(prev);
+                  if (next.has(method.id)) next.delete(method.id);
+                  else next.add(method.id);
+                  return next;
+                })}
               />
             ))}
           </div>
