@@ -8,22 +8,15 @@ import ControlPanel from './ControlPanel';
 import SidebarNav from './SidebarNav';
 import HeaderNav from './HeaderNav';
 import Home from './pages/Home';
-import HomeV2 from './pages/HomeV2';
 import Balances from './pages/Balances';
 
 export default function Prototype4App({ basePath = '' }) {
-  const [version, setVersion] = useState('v1');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  const HomePage = version === 'v2' ? HomeV2 : Home;
 
   return (
     <BasePathContext.Provider value={basePath}>
       <div className="min-h-screen bg-surface">
-        <ControlPanel
-          version={version}
-          onVersionChange={setVersion}
-        />
+        <ControlPanel />
 
         <div className="flex flex-col min-h-screen">
           <div className="flex flex-row flex-1 bg-surface">
@@ -37,7 +30,7 @@ export default function Prototype4App({ basePath = '' }) {
             <div className="ml-0 lg:ml-sidebar-width flex flex-col min-w-0 flex-1 relative" style={{ paddingTop: 60, '--header-offset': '60px' }}>
               <div className="max-w-[1280px] w-full mx-auto px-5 md:px-8 pt-4" style={{ paddingBottom: WORKBENCH_BAR_HEIGHT + 16 }}>
                 <Routes>
-                  <Route path="" element={<HomePage />} />
+                  <Route path="" element={<Home />} />
                   <Route path="balances" element={<Balances />} />
                   <Route path="*" element={<Navigate to={basePath || "/"} replace />} />
                 </Routes>

@@ -10,7 +10,7 @@ import {
   useDragSnap,
 } from '../../sail/ControlPanel';
 
-export default function ControlPanel({ version, onVersionChange }) {
+export default function ControlPanel() {
   const navigate = useNavigate();
   const [minimized, setMinimized] = useState(false);
   const { side, dragging, settling, settlePos, dragPos, snapTarget, panelRef, onPointerDown, didDrag, restLeft, bottomOffset, bottomExpr } = useDragSnap();
@@ -23,11 +23,6 @@ export default function ControlPanel({ version, onVersionChange }) {
   } else {
     style = { left: restLeft, right: 'auto', bottom: bottomExpr };
   }
-
-  const versions = [
-    { key: 'v1', label: 'V1: Accordion' },
-    { key: 'v2', label: 'V2: Split screen' },
-  ];
 
   return (
     <>
@@ -46,22 +41,6 @@ export default function ControlPanel({ version, onVersionChange }) {
           onToggle={() => { if (!didDrag.current) setMinimized(!minimized); }}
         />
         <ControlPanelBody minimized={minimized}>
-          <div className="flex flex-col gap-1 w-full">
-            <p className="text-label-small-emphasized text-subdued uppercase tracking-wider">Version</p>
-            {versions.map((v) => (
-              <button
-                key={v.key}
-                onClick={() => onVersionChange(v.key)}
-                className={`w-full text-left px-3 py-2 rounded-md text-label-medium cursor-pointer transition-colors ${
-                  version === v.key
-                    ? 'bg-brand/10 text-brand text-label-medium-emphasized'
-                    : 'text-default hover:bg-offset'
-                }`}
-              >
-                {v.label}
-              </button>
-            ))}
-          </div>
           <ControlPanelButton onClick={() => navigate('/')}>
             View all prototypes
           </ControlPanelButton>
