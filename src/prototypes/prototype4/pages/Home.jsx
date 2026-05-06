@@ -597,7 +597,7 @@ export default function Home() {
                 <div className="flex flex-col gap-3">
                   <div className="flex flex-col gap-2">
                     <p className="text-label-medium text-default">
-                      {enabledLPMs.length > 0 ? 'Active on subscription payment retries' : 'No payment methods enabled'}
+                      {enabledLPMs.length > 0 ? 'Active on subscription payment retries' : 'Turn on subscription payment retries for local payment methods.'}
                     </p>
                     {enabledLPMs.length > 0 && (
                       <div className="flex flex-wrap gap-1">
