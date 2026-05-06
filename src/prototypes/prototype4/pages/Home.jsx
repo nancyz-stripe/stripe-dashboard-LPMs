@@ -1,15 +1,15 @@
 import { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { Tabs, Button, Radio, Switch } from '../../../sail';
+import { Tabs, Button, Radio, Switch, Chip } from '../../../sail';
 import { Icon } from '../../../icons/SailIcons';
 
 const LOCAL_PAYMENT_METHODS = [
   { id: 'ach', name: 'ACH Direct Debit', icon: 'bank', enabled: true, retryType: 'Custom retry', maxRetries: 2, description: 'Up to 2 retries in total.' },
-  { id: 'pad', name: 'Canadian pre-authorized debits', icon: 'bank', enabled: true, retryType: 'Smart retry', maxRetries: 2, description: 'Up to 2 retries in total, minimum invoice amount 10 EUR.' },
-  { id: 'sepa', name: 'SEPA Direct Debit', icon: 'bank', enabled: true, retryType: 'Custom retry', maxRetries: 2, description: 'Up to 2 retries in total, minimum invoice amount 10 EUR.' },
-  { id: 'bacs', name: 'Bacs Direct Debit', icon: 'bank', enabled: false, retryType: null, maxRetries: 2, description: 'Up to 2 retries in total.' },
   { id: 'au-becs', name: 'Australia BECS Direct Debit', icon: 'bank', enabled: false, retryType: null, maxRetries: 2, description: 'Up to 2 retries in total.' },
+  { id: 'bacs', name: 'Bacs Direct Debit', icon: 'bank', enabled: false, retryType: null, maxRetries: 2, description: 'Up to 2 retries in total.' },
+  { id: 'pad', name: 'Canadian pre-authorized debits', icon: 'bank', enabled: true, retryType: 'Smart retry', maxRetries: 2, description: 'Up to 2 retries in total, minimum invoice amount 10 EUR.' },
   { id: 'nz-becs', name: 'New Zealand BECS Direct Debit', icon: 'bank', enabled: false, retryType: null, maxRetries: 2, description: 'Up to 2 retries in total.' },
+  { id: 'sepa', name: 'SEPA Direct Debit', icon: 'bank', enabled: true, retryType: 'Custom retry', maxRetries: 2, description: 'Up to 2 retries in total, minimum invoice amount 10 EUR.' },
 ];
 
 const CUSTOM_RETRY_DAY_OPTIONS = [
@@ -281,18 +281,9 @@ function ManageDrawer({ open, onClose }) {
 
           {/* Filter chips */}
           <div className="flex gap-2 pb-6">
-            <span className="inline-flex items-center gap-1 h-6 px-2 border border-border rounded-full text-label-small text-default">
-              <Icon name="add" size="xxsmall" fill="currentColor" className="text-icon-subdued" />
-              Payment method name
-            </span>
-            <span className="inline-flex items-center gap-1 h-6 px-2 border border-border rounded-full text-label-small text-default">
-              <Icon name="add" size="xxsmall" fill="currentColor" className="text-icon-subdued" />
-              Type
-            </span>
-            <span className="inline-flex items-center gap-1 h-6 px-2 border border-border rounded-full text-label-small text-default">
-              <Icon name="add" size="xxsmall" fill="currentColor" className="text-icon-subdued" />
-              Status
-            </span>
+            <Chip label="Payment method name" size="sm" renderDropdown={() => null} />
+            <Chip label="Type" size="sm" renderDropdown={() => null} />
+            <Chip label="Status" size="sm" renderDropdown={() => null} />
           </div>
 
           {/* Section header */}
