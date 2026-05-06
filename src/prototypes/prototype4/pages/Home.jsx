@@ -406,6 +406,60 @@ function CardDrawer({ open, onClose, onSave }) {
   );
 }
 
+function NameFilterDropdown({ ref, anchorRef, onClose, value, onChange }) {
+  const [inputValue, setInputValue] = useState(value || '');
+  const dropdownRef = useRef(null);
+  const [pos, setPos] = useState(null);
+
+  useEffect(() => {
+    if (anchorRef?.current) {
+      const rect = anchorRef.current.getBoundingClientRect();
+      setPos({ top: rect.bottom + 4, left: rect.left });
+    }
+  }, [anchorRef]);
+
+  const handleApply = () => {
+    onChange(inputValue.trim());
+    onClose();
+  };
+
+  if (!pos) return null;
+
+  return createPortal(
+    <>
+      <div className="fixed inset-0 z-[301]" onClick={onClose} />
+      <div
+        ref={(el) => { dropdownRef.current = el; if (ref) ref.current = el; }}
+        className="fixed z-[302] bg-surface border border-border rounded-lg shadow-lg overflow-hidden w-[240px]"
+        style={{ top: pos.top, left: pos.left }}
+      >
+        <div className="p-3 flex flex-col gap-3">
+          <p className="text-label-small-emphasized text-default">Filter by: Payment method name</p>
+          <div className="flex items-center gap-2">
+            <span className="text-label-small text-subdued">contains</span>
+            <input
+              type="text"
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              className="flex-1 h-7 px-2 border border-border rounded-md text-label-medium text-default bg-surface outline-none focus:border-brand"
+              autoFocus
+            />
+          </div>
+        </div>
+        <div className="px-3 pb-3">
+          <button
+            onClick={handleApply}
+            className="w-full h-8 bg-brand text-white text-label-medium-emphasized rounded-md cursor-pointer hover:opacity-90 transition-opacity"
+          >
+            Apply
+          </button>
+        </div>
+      </div>
+    </>,
+    document.body
+  );
+}
+
 const TYPE_OPTIONS = [
   'Bank debits',
   'Bank redirects',
@@ -452,12 +506,11 @@ function TypeFilterDropdown({ ref, anchorRef, onClose, value, onChange }) {
           <p className="text-label-small-emphasized text-default">Filter by: Type</p>
           {TYPE_OPTIONS.map((option) => (
             <label key={option} className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={selected.includes(option)}
-                onChange={() => handleToggle(option)}
-                className="size-4 rounded border-border accent-brand"
-              />
+              <span className={`flex items-center justify-center size-4 rounded border shrink-0 ${selected.includes(option) ? 'bg-brand border-brand' : 'border-border bg-surface'}`}>
+                {selected.includes(option) && (
+                  <Icon name="check" size="xxsmall" fill="white" />
+                )}
+              </span>
               <span className="text-label-medium text-default">{option}</span>
             </label>
           ))}
@@ -480,11 +533,13 @@ function LPMDrawer({ open, onClose, enabledMethods, onSave }) {
   const [methodStates, setMethodStates] = useState(enabledMethods);
   const [expandedIds, setExpandedIds] = useState(new Set());
   const [typeFilter, setTypeFilter] = useState([]);
+  const [nameFilter, setNameFilter] = useState('');
 
   useEffect(() => {
     if (open) {
       setMethodStates(enabledMethods);
       setTypeFilter([]);
+      setNameFilter('');
     }
   }, [open]);
 
@@ -512,7 +567,16 @@ function LPMDrawer({ open, onClose, enabledMethods, onSave }) {
     <DrawerShell open={open} onClose={onClose} onSave={() => onSave(methodStates)} saveDisabled={!hasChanges}>
       {/* Filter chips */}
       <div className="flex gap-2 pb-6">
-        <Chip label="Payment method name" size="sm" renderDropdown={() => null} />
+        <Chip
+          label="Payment method name"
+          size="sm"
+          value={nameFilter || undefined}
+          displayValue={nameFilter || undefined}
+          onClear={() => setNameFilter('')}
+          renderDropdown={({ ref, anchorRef, onClose }) => (
+            <NameFilterDropdown ref={ref} anchorRef={anchorRef} onClose={onClose} value={nameFilter} onChange={setNameFilter} />
+          )}
+        />
         <Chip
           label="Type"
           size="sm"
