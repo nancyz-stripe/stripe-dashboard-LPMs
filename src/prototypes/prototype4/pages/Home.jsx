@@ -437,7 +437,7 @@ export default function Home() {
   const handleDrawerSave = (newStates) => {
     setEnabledMethods(newStates);
     setDrawerOpen(false);
-    setToast({ key: Date.now(), message: 'Subscription retry settings saved' });
+    setToast({ key: Date.now(), message: 'Subscription retry settings are saved' });
   };
 
   const subscriptionOptions = ['cancel the subscription', 'mark the subscription as unpaid', 'leave the subscription past due'];
