@@ -198,7 +198,7 @@ function DrawerAccordionItem({ method, enabled, onToggle, expanded, onExpand }) 
       </div>
 
       {expanded && (
-        <div className="px-4 pb-4">
+        <div className={`px-4 pb-4 ${!enabled ? 'opacity-50 pointer-events-none' : ''}`}>
           <p className="text-label-small text-subdued pb-4">
             {method.description}{' '}
             <span className="text-brand cursor-pointer hover:underline">Learn more</span>
