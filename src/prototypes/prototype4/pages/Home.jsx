@@ -304,6 +304,8 @@ function ManageDrawer({ open, onClose, enabledMethods, onSave }) {
     setMethodStates(updated);
   };
 
+  const hasChanges = LOCAL_PAYMENT_METHODS.some((m) => methodStates[m.id] !== enabledMethods[m.id]);
+
   const handleSave = () => {
     onSave(methodStates);
   };
@@ -372,7 +374,7 @@ function ManageDrawer({ open, onClose, enabledMethods, onSave }) {
         {/* Footer */}
         <div className="flex items-center justify-end gap-3 px-4 py-4 border-t border-border">
           <Button variant="secondary" onClick={onClose}>Cancel</Button>
-          <Button variant="primary" onClick={handleSave}>Save</Button>
+          <Button variant="primary" onClick={handleSave} disabled={!hasChanges}>Save</Button>
         </div>
       </div>
     </div>,
@@ -484,7 +486,7 @@ export default function Home() {
                       <PaymentMethodPill icon="card" label="Cards" />
                     </div>
                   </div>
-                  <a href="#" className="text-label-medium text-brand hover:underline w-fit">Manage</a>
+                  <a href="#" className="text-label-medium text-brand w-fit">Manage</a>
                 </div>
               </TableRow>
 
@@ -505,7 +507,7 @@ export default function Home() {
                   </div>
                   <button
                     onClick={() => setDrawerOpen(true)}
-                    className="text-label-medium text-brand hover:underline w-fit cursor-pointer"
+                    className="text-label-medium text-brand w-fit cursor-pointer"
                   >
                     Manage
                   </button>
