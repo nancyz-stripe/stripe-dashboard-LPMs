@@ -406,12 +406,86 @@ function CardDrawer({ open, onClose, onSave }) {
   );
 }
 
+const TYPE_OPTIONS = [
+  'Bank debits',
+  'Bank redirects',
+  'Bank transfers',
+  'Buy now, pay later',
+  'Local markets',
+  'Real-time payments',
+];
+
+function TypeFilterDropdown({ ref, anchorRef, onClose, value, onChange }) {
+  const [selected, setSelected] = useState(value || []);
+  const dropdownRef = useRef(null);
+  const [pos, setPos] = useState(null);
+
+  useEffect(() => {
+    if (anchorRef?.current) {
+      const rect = anchorRef.current.getBoundingClientRect();
+      setPos({ top: rect.bottom + 4, left: rect.left });
+    }
+  }, [anchorRef]);
+
+  const handleToggle = (option) => {
+    setSelected((prev) =>
+      prev.includes(option) ? prev.filter((o) => o !== option) : [...prev, option]
+    );
+  };
+
+  const handleApply = () => {
+    onChange(selected);
+    onClose();
+  };
+
+  if (!pos) return null;
+
+  return createPortal(
+    <>
+      <div className="fixed inset-0 z-[301]" onClick={onClose} />
+      <div
+        ref={(el) => { dropdownRef.current = el; if (ref) ref.current = el; }}
+        className="fixed z-[302] bg-surface border border-border rounded-lg shadow-lg overflow-hidden w-[240px]"
+        style={{ top: pos.top, left: pos.left }}
+      >
+        <div className="p-3 flex flex-col gap-2">
+          <p className="text-label-small-emphasized text-default">Filter by: Type</p>
+          {TYPE_OPTIONS.map((option) => (
+            <label key={option} className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={selected.includes(option)}
+                onChange={() => handleToggle(option)}
+                className="size-4 rounded border-border accent-brand"
+              />
+              <span className="text-label-medium text-default">{option}</span>
+            </label>
+          ))}
+        </div>
+        <div className="px-3 pb-3">
+          <button
+            onClick={handleApply}
+            className="w-full h-8 bg-brand text-white text-label-medium-emphasized rounded-md cursor-pointer hover:opacity-90 transition-opacity"
+          >
+            Apply
+          </button>
+        </div>
+      </div>
+    </>,
+    document.body
+  );
+}
+
 function LPMDrawer({ open, onClose, enabledMethods, onSave }) {
   const [methodStates, setMethodStates] = useState(enabledMethods);
   const [expandedIds, setExpandedIds] = useState(new Set());
+  const [typeFilter, setTypeFilter] = useState([]);
 
   useEffect(() => {
-    if (open) setMethodStates(enabledMethods);
+    if (open) {
+      setMethodStates(enabledMethods);
+      setTypeFilter([]);
+    }
   }, [open]);
 
   const handleToggle = (id) => {
@@ -439,7 +513,16 @@ function LPMDrawer({ open, onClose, enabledMethods, onSave }) {
       {/* Filter chips */}
       <div className="flex gap-2 pb-6">
         <Chip label="Payment method name" size="sm" renderDropdown={() => null} />
-        <Chip label="Type" size="sm" renderDropdown={() => null} />
+        <Chip
+          label="Type"
+          size="sm"
+          value={typeFilter.length > 0 ? typeFilter : undefined}
+          displayValue={typeFilter.length === 1 ? typeFilter[0] : typeFilter.length > 1 ? `${typeFilter.length} selected` : undefined}
+          onClear={() => setTypeFilter([])}
+          renderDropdown={({ ref, anchorRef, onClose }) => (
+            <TypeFilterDropdown ref={ref} anchorRef={anchorRef} onClose={onClose} value={typeFilter} onChange={setTypeFilter} />
+          )}
+        />
         <Chip label="Status" size="sm" renderDropdown={() => null} />
       </div>
 
