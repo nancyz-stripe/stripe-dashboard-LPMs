@@ -747,7 +747,6 @@ export default function Home({ activeVersion }) {
                   ) : (
                     <p className="text-label-medium text-default">Turn on subscription payment retries for local payment methods.</p>
                   )}
-                  </div>
                   <button
                     onClick={() => setLpmDrawerOpen(true)}
                     className="text-label-medium text-brand w-fit cursor-pointer"
