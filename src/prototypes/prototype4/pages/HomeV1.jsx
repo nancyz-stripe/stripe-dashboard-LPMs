@@ -668,7 +668,7 @@ function ResourceCard({ title, description }) {
   );
 }
 
-export default function HomeV2() {
+export default function HomeV1() {
   const [activeTab, setActiveTab] = useState('retries');
   const [subscriptionAction, setSubscriptionAction] = useState('cancel the subscription');
   const [invoiceAction, setInvoiceAction] = useState('leave the invoice overdue');
