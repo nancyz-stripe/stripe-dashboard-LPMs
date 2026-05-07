@@ -193,7 +193,7 @@ function DrawerAccordionItem({ method, enabled, onToggle, expanded, onExpand }) 
         <div className="flex-1 min-w-0">
           <p className="text-label-medium-emphasized text-default">{method.name}</p>
           {enabled && (
-            <p className="text-label-small text-subdued">{policy === 'custom' ? 'Custom retry' : 'Smart retry'}</p>
+            <p className="text-label-small text-subdued">{policy === 'custom' ? 'Custom retry' : 'Automatic retry'}</p>
           )}
         </div>
         <Icon name={expanded ? 'chevronDown' : 'chevronRight'} size="xxsmall" fill="currentColor" className="text-icon-subdued" />
@@ -214,7 +214,7 @@ function DrawerAccordionItem({ method, enabled, onToggle, expanded, onExpand }) 
                 checked={policy === 'automatic'}
                 onChange={() => setPolicy('automatic')}
               />
-              <span className="text-label-medium-emphasized text-default">Smart Retries for subscription</span>
+              <span className="text-label-medium-emphasized text-default">Automatic retries for subscription</span>
               <Tooltip
                 placement="bottom"
                 content={
