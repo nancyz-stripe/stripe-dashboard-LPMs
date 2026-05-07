@@ -175,6 +175,8 @@ function CustomRetryControls({ maxRetries }) {
 
 function DrawerAccordionItem({ method, enabled, onToggle, expanded, onExpand }) {
   const [policy, setPolicy] = useState('automatic');
+  const [smartTimes, setSmartTimes] = useState('8 times');
+  const [smartDuration, setSmartDuration] = useState('1 month');
 
   return (
     <div className="border-b border-border">
@@ -191,7 +193,7 @@ function DrawerAccordionItem({ method, enabled, onToggle, expanded, onExpand }) 
         <div className="flex-1 min-w-0">
           <p className="text-label-medium-emphasized text-default">{method.name}</p>
           {enabled && (
-            <p className="text-label-small text-subdued">{policy === 'custom' ? 'Custom retry' : 'Automatic retry'}</p>
+            <p className="text-label-small text-subdued">{policy === 'custom' ? 'Custom retry' : 'Smart retry'}</p>
           )}
         </div>
         <Icon name={expanded ? 'chevronDown' : 'chevronRight'} size="xxsmall" fill="currentColor" className="text-icon-subdued" />
@@ -212,7 +214,7 @@ function DrawerAccordionItem({ method, enabled, onToggle, expanded, onExpand }) 
                 checked={policy === 'automatic'}
                 onChange={() => setPolicy('automatic')}
               />
-              <span className="text-label-medium-emphasized text-default">Automatic retries for subscription</span>
+              <span className="text-label-medium-emphasized text-default">Smart Retries for subscription</span>
               <Tooltip
                 placement="bottom"
                 content={
@@ -225,6 +227,15 @@ function DrawerAccordionItem({ method, enabled, onToggle, expanded, onExpand }) 
                 <Icon name="info" size="xxsmall" fill="currentColor" className="text-icon-subdued cursor-help" />
               </Tooltip>
             </label>
+
+            {policy === 'automatic' && (
+              <div className="flex items-center gap-2 pl-[22px]">
+                <span className="text-label-small text-subdued">Retry up to</span>
+                <SelectMenuSmall value={smartTimes} options={SMART_RETRY_TIMES} onChange={setSmartTimes} />
+                <span className="text-label-small text-subdued">within</span>
+                <SelectMenuSmall value={smartDuration} options={SMART_RETRY_DURATIONS} onChange={setSmartDuration} />
+              </div>
+            )}
 
             <label className="flex items-center gap-2 cursor-pointer">
               <Radio
