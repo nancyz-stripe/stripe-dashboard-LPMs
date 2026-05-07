@@ -576,30 +576,6 @@ function LPMDrawer({ open, onClose, enabledMethods, onSave }) {
 
   return (
     <DrawerShell open={open} onClose={onClose} onSave={() => onSave(methodStates)} saveDisabled={!hasChanges}>
-      {/* Filter chips */}
-      <div className="flex gap-2 pb-6">
-        <Chip
-          label="Payment method name"
-          size="sm"
-          value={nameFilter || undefined}
-          displayValue={nameFilter || undefined}
-          onClear={() => setNameFilter('')}
-          renderDropdown={({ ref, anchorRef, onClose }) => (
-            <NameFilterDropdown ref={ref} anchorRef={anchorRef} onClose={onClose} value={nameFilter} onChange={setNameFilter} />
-          )}
-        />
-        <Chip
-          label="Type"
-          size="sm"
-          value={typeFilter.length > 0 ? typeFilter : undefined}
-          displayValue={typeFilter.length === 1 ? typeFilter[0] : typeFilter.length > 1 ? `${typeFilter.length} selected` : undefined}
-          onClear={() => setTypeFilter([])}
-          renderDropdown={({ ref, anchorRef, onClose }) => (
-            <TypeFilterDropdown ref={ref} anchorRef={anchorRef} onClose={onClose} value={typeFilter} onChange={setTypeFilter} />
-          )}
-        />
-      </div>
-
       {/* Section header */}
       <div className="flex items-center justify-between pb-3">
         <p className="text-label-medium-emphasized text-default">Local payment methods</p>
