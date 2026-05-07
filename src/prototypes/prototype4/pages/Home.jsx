@@ -723,11 +723,8 @@ export default function Home({ activeVersion }) {
               {/* Card payments row */}
               <TableRow label="Card payments">
                 <div className="flex flex-col gap-3">
-                  <div className="flex flex-col gap-2">
-                    <p className="text-label-medium text-default">Active on subscription payment retries</p>
-                    <div className="flex flex-wrap gap-1">
-                      <PaymentMethodPill icon="card" label="Cards" />
-                    </div>
+                  <div className="flex flex-wrap gap-1">
+                    <PaymentMethodPill icon="card" label="Cards" />
                   </div>
                   <button
                     onClick={() => setCardDrawerOpen(true)}
@@ -741,17 +738,15 @@ export default function Home({ activeVersion }) {
               {/* Local payment methods row */}
               <TableRow label="Local payment methods">
                 <div className="flex flex-col gap-3">
-                  <div className="flex flex-col gap-2">
-                    <p className="text-label-medium text-default">
-                      {enabledLPMs.length > 0 ? 'Active on subscription payment retries' : 'Turn on subscription payment retries for local payment methods.'}
-                    </p>
-                    {enabledLPMs.length > 0 && (
-                      <div className="flex flex-wrap gap-1">
-                        {enabledLPMs.map((m) => (
-                          <PaymentMethodPill key={m.id} icon={m.icon} label={m.name} />
-                        ))}
-                      </div>
-                    )}
+                  {enabledLPMs.length > 0 ? (
+                    <div className="flex flex-wrap gap-1">
+                      {enabledLPMs.map((m) => (
+                        <PaymentMethodPill key={m.id} icon={m.icon} label={m.name} />
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-label-medium text-default">Turn on subscription payment retries for local payment methods.</p>
+                  )}
                   </div>
                   <button
                     onClick={() => setLpmDrawerOpen(true)}
