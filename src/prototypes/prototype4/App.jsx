@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { BasePathContext } from '../../contexts/BasePath';
 import { Sidebar } from '../../sail/Sidebar';
@@ -6,11 +6,13 @@ import { Header, SandboxBanner, SANDBOX_HEIGHT } from '../../sail/Header';
 import { Workbench, WORKBENCH_BAR_HEIGHT } from '../../sail';
 import SidebarNav from './SidebarNav';
 import HeaderNav from './HeaderNav';
+import ControlPanel from './ControlPanel';
 import Home from './pages/Home';
 import Balances from './pages/Balances';
 
 export default function Prototype4App({ basePath = '' }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [activeVersion, setActiveVersion] = useState('billing-retries');
 
   return (
     <BasePathContext.Provider value={basePath}>
@@ -27,7 +29,7 @@ export default function Prototype4App({ basePath = '' }) {
             <div className="ml-0 lg:ml-sidebar-width flex flex-col min-w-0 flex-1 relative" style={{ paddingTop: 60, '--header-offset': '60px' }}>
               <div className="max-w-[1280px] w-full mx-auto px-5 md:px-8 pt-4" style={{ paddingBottom: WORKBENCH_BAR_HEIGHT + 16 }}>
                 <Routes>
-                  <Route path="" element={<Home />} />
+                  <Route path="" element={<Home activeVersion={activeVersion} />} />
                   <Route path="balances" element={<Balances />} />
                   <Route path="*" element={<Navigate to={basePath || "/"} replace />} />
                 </Routes>
@@ -36,7 +38,8 @@ export default function Prototype4App({ basePath = '' }) {
           </div>
         </div>
 
-        {/* Workbench */}
+        <ControlPanel activeVersion={activeVersion} onVersionChange={setActiveVersion} />
+
         <Workbench
           maxHeight={window.innerHeight}
           tabs={[

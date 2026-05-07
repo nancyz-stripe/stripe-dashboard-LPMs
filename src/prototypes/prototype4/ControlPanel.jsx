@@ -10,7 +10,7 @@ import {
   useDragSnap,
 } from '../../sail/ControlPanel';
 
-export default function ControlPanel() {
+export default function ControlPanel({ activeVersion, onVersionChange }) {
   const navigate = useNavigate();
   const [minimized, setMinimized] = useState(false);
   const { side, dragging, settling, settlePos, dragPos, snapTarget, panelRef, onPointerDown, didDrag, restLeft, bottomOffset, bottomExpr } = useDragSnap();
@@ -42,12 +42,18 @@ export default function ControlPanel() {
         />
         <ControlPanelBody minimized={minimized}>
           <div className="flex flex-col gap-1 w-full">
-            <p className="text-label-small text-subdued px-1">Prototypes</p>
-            <ControlPanelButton active>
-              Billing retries
+            <p className="text-label-small text-subdued px-1">Versions</p>
+            <ControlPanelButton
+              active={activeVersion === 'billing-retries'}
+              onClick={() => onVersionChange('billing-retries')}
+            >
+              v1: Billing retries
             </ControlPanelButton>
-            <ControlPanelButton onClick={() => navigate('/prototype6')}>
-              Off session payments
+            <ControlPanelButton
+              active={activeVersion === 'off-session'}
+              onClick={() => onVersionChange('off-session')}
+            >
+              v2: Off session payments
             </ControlPanelButton>
           </div>
           <ControlPanelButton onClick={() => navigate('/')}>
