@@ -1,7 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import {
-  ControlPanelButton,
   ControlPanelHeader,
   ControlPanelBody,
   MARGIN,
@@ -10,8 +8,22 @@ import {
   useDragSnap,
 } from '../../sail/ControlPanel';
 
+function VersionButton({ active, onClick, children }) {
+  return (
+    <button
+      onClick={onClick}
+      className={`px-3 py-1.5 text-label-medium rounded-lg w-full border cursor-pointer transition-colors text-left ${
+        active
+          ? 'bg-button-primary-bg text-button-primary-text border-transparent'
+          : 'bg-surface text-default border-border hover:bg-offset'
+      }`}
+    >
+      {children}
+    </button>
+  );
+}
+
 export default function ControlPanel({ activeVersion, onVersionChange }) {
-  const navigate = useNavigate();
   const [minimized, setMinimized] = useState(false);
   const { side, dragging, settling, settlePos, dragPos, snapTarget, panelRef, onPointerDown, didDrag, restLeft, bottomOffset, bottomExpr } = useDragSnap();
 
@@ -41,24 +53,20 @@ export default function ControlPanel({ activeVersion, onVersionChange }) {
           onToggle={() => { if (!didDrag.current) setMinimized(!minimized); }}
         />
         <ControlPanelBody minimized={minimized}>
-          <div className="flex flex-col gap-1 w-full">
-            <p className="text-label-small text-subdued px-1">Versions</p>
-            <ControlPanelButton
+          <div className="flex flex-col gap-1.5 w-full">
+            <VersionButton
               active={activeVersion === 'billing-retries'}
               onClick={() => onVersionChange('billing-retries')}
             >
               v1: Billing retries
-            </ControlPanelButton>
-            <ControlPanelButton
+            </VersionButton>
+            <VersionButton
               active={activeVersion === 'off-session'}
               onClick={() => onVersionChange('off-session')}
             >
               v2: Off session payments
-            </ControlPanelButton>
+            </VersionButton>
           </div>
-          <ControlPanelButton onClick={() => navigate('/')}>
-            View all prototypes
-          </ControlPanelButton>
         </ControlPanelBody>
       </div>
     </>
