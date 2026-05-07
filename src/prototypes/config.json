@@ -25,5 +25,10 @@
     "name": "PM settings",
     "description": "Payment method settings page",
     "status": "active"
+  },
+  "prototype6": {
+    "name": "Off session payments",
+    "description": "Off session payment retry settings",
+    "status": "active"
   }
 }

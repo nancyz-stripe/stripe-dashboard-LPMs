@@ -43,10 +43,10 @@ export default function ControlPanel() {
         <ControlPanelBody minimized={minimized}>
           <div className="flex flex-col gap-1 w-full">
             <p className="text-label-small text-subdued px-1">Prototypes</p>
-            <ControlPanelButton active>
+            <ControlPanelButton onClick={() => navigate('/prototype4')}>
               Billing retries
             </ControlPanelButton>
-            <ControlPanelButton onClick={() => navigate('/prototype6')}>
+            <ControlPanelButton active>
               Off session payments
             </ControlPanelButton>
           </div>
