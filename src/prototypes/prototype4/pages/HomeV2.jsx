@@ -214,7 +214,7 @@ function DrawerAccordionItem({ method, enabled, onToggle, expanded, onExpand }) 
                 checked={policy === 'automatic'}
                 onChange={() => setPolicy('automatic')}
               />
-              <span className="text-label-medium-emphasized text-default">Automatic retries for subscription</span>
+              <span className="text-label-medium-emphasized text-default">Automatic retries</span>
               <Tooltip
                 placement="bottom"
                 content={
@@ -244,7 +244,7 @@ function DrawerAccordionItem({ method, enabled, onToggle, expanded, onExpand }) 
                 checked={policy === 'custom'}
                 onChange={() => setPolicy('custom')}
               />
-              <span className="text-label-medium-emphasized text-default">Custom retry schedule for subscriptions</span>
+              <span className="text-label-medium-emphasized text-default">Custom retry schedule</span>
               <Tooltip
                 placement="bottom"
                 content={
@@ -300,7 +300,7 @@ function DrawerShell({ open, onClose, children, onSave, saveDisabled }) {
       <div className="flex-1 bg-black/30" onClick={onClose} />
       <div className="w-[480px] bg-surface flex flex-col shadow-xl animate-[slideInRight_0.2s_ease-out]">
         <div className="flex items-center justify-between px-4 py-4 border-b border-border">
-          <h2 className="text-heading-small text-default">Manage subscription retries</h2>
+          <h2 className="text-heading-small text-default">Off-Session Payments retries</h2>
           <button
             onClick={onClose}
             className="flex items-center justify-center size-7 rounded hover:bg-offset transition-colors cursor-pointer"
@@ -310,7 +310,7 @@ function DrawerShell({ open, onClose, children, onSave, saveDisabled }) {
         </div>
         <div className="flex-1 overflow-y-auto px-4 py-4">
           <p className="text-label-medium text-subdued pb-4">
-            Set up automated recovery features that reduce and recover failed subscription payments.
+            Set up automated recovery features that reduce and recover failed off-session payments.
           </p>
           {children}
         </div>
@@ -338,13 +338,8 @@ function CardDrawer({ open, onClose, onSave }) {
 
   return (
     <DrawerShell open={open} onClose={onClose} onSave={() => { onSave(); }} saveDisabled={!hasChanges}>
-      {/* Section header */}
-      <div className="pb-3">
-        <p className="text-label-medium-emphasized text-default">Card payment retries</p>
-      </div>
-
       {/* Card item — static, always visible */}
-      <div className="border-t border-border">
+      <div>
         <div className="flex items-center gap-2 px-2 py-3">
           <div className="flex items-center justify-center size-8 rounded bg-offset shrink-0">
             <Icon name="card" size="small" fill="currentColor" className="text-icon-subdued" />
@@ -364,7 +359,7 @@ function CardDrawer({ open, onClose, onSave }) {
                 checked={policy === 'smart'}
                 onChange={() => { setPolicy('smart'); markChanged(); }}
               />
-              <span className="text-label-medium-emphasized text-default">Smart Retries for subscription</span>
+              <span className="text-label-medium-emphasized text-default">Smart Retries</span>
               <Tooltip
                 placement="bottom"
                 content={
@@ -387,14 +382,15 @@ function CardDrawer({ open, onClose, onSave }) {
               </div>
             )}
 
-            <label className="flex items-center gap-2 cursor-pointer">
+            <label className="flex items-center gap-2 cursor-pointer w-full">
               <Radio
                 name="card-drawer-policy"
                 value="custom"
                 checked={policy === 'custom'}
                 onChange={() => { setPolicy('custom'); markChanged(); }}
               />
-              <span className="text-label-medium-emphasized text-default">Custom retry schedule for subscriptions</span>
+              <span className="text-label-medium-emphasized text-default">Custom retry schedule</span>
+              <button className="text-label-medium text-brand cursor-pointer hover:underline ml-auto">Set up in workflow</button>
               <Tooltip
                 placement="bottom"
                 content={
@@ -578,7 +574,7 @@ function LPMDrawer({ open, onClose, enabledMethods, onSave }) {
     <DrawerShell open={open} onClose={onClose} onSave={() => onSave(methodStates)} saveDisabled={!hasChanges}>
       {/* Section header */}
       <div className="flex items-center justify-between pb-3">
-        <p className="text-label-medium-emphasized text-default">Local payment methods</p>
+        <p className="text-label-medium-emphasized text-default">Retries for failed bank details</p>
         <Button variant="secondary" size="sm" onClick={allEnabled ? handleDisableAll : handleEnableAll}>
           {allEnabled ? 'Disable all' : 'Enable all'}
         </Button>
@@ -662,33 +658,37 @@ export default function HomeV2() {
   const handleLpmDrawerSave = (newStates) => {
     setEnabledMethods(newStates);
     setLpmDrawerOpen(false);
-    setToast({ key: Date.now(), message: 'Subscription retry settings are saved' });
+    setToast({ key: Date.now(), message: 'Off-session payment retry settings are saved' });
   };
 
   const handleCardDrawerSave = () => {
     setCardDrawerOpen(false);
-    setToast({ key: Date.now(), message: 'Subscription retry settings are saved' });
+    setToast({ key: Date.now(), message: 'Off-session payment retry settings are saved' });
   };
 
   const subscriptionOptions = ['cancel the subscription', 'mark the subscription as unpaid', 'leave the subscription past due'];
   const invoiceOptions = ['leave the invoice overdue', 'mark the invoice as uncollectible', 'void the invoice'];
 
   const tabs = [
-    { key: 'overview', label: 'Overview' },
+    { key: 'checkout', label: 'Checkout and Payment Links' },
+    { key: 'methods', label: 'Payment methods' },
+    { key: 'domains', label: 'Payment methods domains' },
+    { key: 'optimizations', label: 'Payment optimizations' },
+    { key: 'orders', label: 'Orders' },
+    { key: 'pricing', label: 'Adaptive pricing' },
     { key: 'retries', label: 'Retries' },
-    { key: 'emails', label: 'Emails' },
-    { key: 'automations', label: 'Automations' },
   ];
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-8">
       {/* Page Header */}
       <div>
         <div className="flex flex-col gap-1 pt-1.5">
-          <h1 className="text-heading-xlarge text-default">Revenue recovery</h1>
-          <p className="text-label-large text-subdued">
-            Use automated recovery features that reduce and recover failed subscription payments.
-          </p>
+          <div className="flex items-center gap-2 mb-1">
+            <span className="text-label-small-emphasized text-brand cursor-pointer hover:underline">Settings</span>
+            <Icon name="chevronRight" size="xxsmall" fill="currentColor" className="text-icon-subdued" />
+          </div>
+          <h1 className="text-heading-xlarge text-default">Payments</h1>
         </div>
         <div className="mt-4">
           <Tabs tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab} />
@@ -698,17 +698,16 @@ export default function HomeV2() {
       {/* Content */}
       {activeTab === 'retries' && (
         <div className="flex flex-col gap-10 pb-20">
-          {/* Payment method retries */}
           <div>
-            <div className="flex flex-col gap-1.5 pb-6">
-              <h2 className="text-heading-medium text-default">Payment method retries</h2>
-              <p className="text-label-medium text-subdued">Manage failed payment recovery for payment methods.</p>
+            <div className="flex flex-col gap-1 border-b border-border pb-2 mb-6">
+              <h2 className="text-heading-medium text-default">Retries settings</h2>
+              <p className="text-body-small text-subdued">Configure retry settings for failed card payments on recurring and unscheduled off-session payments.</p>
             </div>
 
             {/* Table rows */}
-            <div className="border-t border-border">
-              {/* Card payments row */}
-              <TableRow label="Card payments">
+            <div>
+              {/* Off-session payments row */}
+              <TableRow label="Off-session payments">
                 <div className="flex flex-col gap-3">
                   <div className="flex flex-wrap gap-1">
                     <PaymentMethodPill icon="card" label="Cards" />
@@ -722,8 +721,8 @@ export default function HomeV2() {
                 </div>
               </TableRow>
 
-              {/* Local payment methods row */}
-              <TableRow label="Local payment methods">
+              {/* Retries for failed bank details row */}
+              <TableRow label="Retries for failed bank details" isLast>
                 <div className="flex flex-col gap-3">
                   {enabledLPMs.length > 0 ? (
                     <div className="flex flex-wrap gap-1">
@@ -742,50 +741,9 @@ export default function HomeV2() {
                   </button>
                 </div>
               </TableRow>
-
-              {/* Subscription status row */}
-              <TableRow label="Subscription status">
-                <div className="flex items-center gap-3">
-                  <span className="text-label-medium text-default">If all retries for a payment fails,</span>
-                  <SelectMenu value={subscriptionAction} options={subscriptionOptions} onChange={setSubscriptionAction} />
-                </div>
-              </TableRow>
-
-              {/* Invoice status row */}
-              <TableRow label="Invoice status" isLast>
-                <div className="flex items-center gap-3">
-                  <span className="text-label-medium text-default">If all retries for a payment fails,</span>
-                  <SelectMenu value={invoiceAction} options={invoiceOptions} onChange={setInvoiceAction} />
-                </div>
-              </TableRow>
-            </div>
-          </div>
-
-          {/* Resources */}
-          <div>
-            <h2 className="text-heading-medium text-default pb-3">Resources</h2>
-            <div className="flex gap-4">
-              <ResourceCard
-                title="Automated recovery"
-                description="Learn about automated recovery features that reduce and recover failed payments."
-              />
-              <ResourceCard
-                title="Automations"
-                description="Learn how to customise your recovery flows for different customer segments."
-              />
             </div>
           </div>
         </div>
-      )}
-
-      {activeTab === 'overview' && (
-        <div className="text-subdued text-body-small">Overview content would go here.</div>
-      )}
-      {activeTab === 'emails' && (
-        <div className="text-subdued text-body-small">Emails content would go here.</div>
-      )}
-      {activeTab === 'automations' && (
-        <div className="text-subdued text-body-small">Automations content would go here.</div>
       )}
 
       <CardDrawer
