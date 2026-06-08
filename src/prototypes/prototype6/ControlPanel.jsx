@@ -13,7 +13,7 @@ import {
 } from '../../sail/ControlPanel';
 import { Switch } from '../../sail';
 
-export default function ControlPanel({ darkMode, onToggleDarkMode, sandboxMode, onToggleSandboxMode }) {
+export default function ControlPanel({ darkMode, onToggleDarkMode, sandboxMode, onToggleSandboxMode, managedMode, onToggleManagedMode }) {
   const navigate = useNavigate();
   const [minimized, setMinimized] = useState(false);
   const [contextOpen, setContextOpen] = useState(false);
@@ -56,6 +56,12 @@ export default function ControlPanel({ darkMode, onToggleDarkMode, sandboxMode, 
             checked={sandboxMode}
             onChange={onToggleSandboxMode}
             label="Sandbox mode"
+            className="w-full"
+          />
+          <Switch
+            checked={managedMode}
+            onChange={onToggleManagedMode}
+            label="Stripe-managed mode"
             className="w-full"
           />
           <ControlPanelButton onClick={() => setContextOpen(true)}>

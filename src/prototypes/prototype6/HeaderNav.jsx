@@ -1,8 +1,9 @@
 import { HeaderButton } from '../../sail/Header';
 import { Icon } from '../../icons/SailIcons';
 import { DiamondAppIcon, BoatAppIcon, ZapAppIcon } from '../../icons/AppIcons';
+import NotificationBell from './components/NotificationBell';
 
-export default function HeaderNav() {
+export default function HeaderNav({ onNavigateToMethod }) {
   return (
     <div className="flex items-center">
       {/* App Dock - desktop only */}
@@ -28,9 +29,7 @@ export default function HeaderNav() {
         <HeaderButton className="hidden lg:flex">
           <Icon name="help" className="size-[16px]" />
         </HeaderButton>
-        <HeaderButton>
-          <Icon name="notifications" className="size-[20px] lg:size-[16px]" />
-        </HeaderButton>
+        <NotificationBell onNavigateToMethod={onNavigateToMethod} />
         <HeaderButton>
           <Icon name="settings" className="size-[20px] lg:size-[16px]" />
         </HeaderButton>
