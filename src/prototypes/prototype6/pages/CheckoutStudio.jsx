@@ -28,17 +28,17 @@ export default function CheckoutStudio({ managedMode, onModeChange }) {
       <div className="mb-6">
         <h1 className="text-display-small">Checkout</h1>
         {/* Tabs */}
-        <div className="flex items-center gap-0 mt-4 border-b border-border -mx-5 md:-mx-8 px-5 md:px-8">
+        <div className="flex items-center gap-1 mt-4 p-1.5 border border-border rounded-lg w-fit">
           {tabs.map(tab => {
             const tabId = tab.toLowerCase().replace(/\s+/g, '-');
             return (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tabId)}
-                className={`px-4 py-3 text-label-medium whitespace-nowrap border-b-2 transition-colors ${
+                className={`px-3 py-1.5 text-label-small whitespace-nowrap rounded transition-colors ${
                   activeTab === tabId
-                    ? 'border-[#675dff] text-default'
-                    : 'border-transparent text-subdued hover:text-default'
+                    ? 'bg-[#EFECFC] text-[#533AFD] text-label-small-emphasized'
+                    : 'text-[#667691] hover:text-default'
                 }`}
               >
                 {tab}
