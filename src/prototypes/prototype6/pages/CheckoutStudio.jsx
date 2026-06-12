@@ -39,17 +39,28 @@ const HIGHLIGHTS = [
   },
 ];
 
-const KEY_METRICS_DATA = {
-  conversion: { value: '73.2%', change: '+4.8%' },
-  paymentVolume: { value: '$82,345', change: '+8%' },
-  feesSaved: { value: '$8.3k', change: '+12%' },
-};
+const KEY_METRICS = [
+  { id: 'conversion', label: 'Conversion', value: '73.2%', change: '+3.45%', positive: true },
+  { id: 'volume', label: 'Payment volume', value: '$82,345', change: '-4.56%', positive: false },
+  { id: 'fees', label: 'Fees saved', value: '$8.9K', change: '+1.56%', positive: true },
+];
 
-const CHART_DATA = Array.from({ length: 30 }, (_, i) => ({
-  day: i + 1,
-  before: 62 + Math.random() * 4,
-  after: i > 14 ? 68 + Math.random() * 6 : null,
-}));
+const CHART_DAYS = (() => {
+  const days = [];
+  for (let i = 0; i < 30; i++) {
+    const date = new Date(2025, 3, 1 + i);
+    const base = 45 + i * 1.2 + Math.sin(i * 0.5) * 3;
+    const withoutOpt = 40 + i * 0.5 + Math.sin(i * 0.3) * 2;
+    days.push({
+      date,
+      label: `Apr ${date.getDate()}`,
+      conversion: Math.min(base, 78),
+      withoutOptimization: Math.min(withoutOpt, 55),
+      pmEnabled: i === 13 ? 'Bizum' : i === 16 ? 'Klarna' : null,
+    });
+  }
+  return days;
+})();
 
 const OVERVIEW_MARKETS = [
   { flag: '🇩🇪', name: 'Spain', volume: '$174.0k', conversionRate: '4.2%', activeShare: '43.2%', conversion: '+5.7%' },
@@ -75,7 +86,8 @@ const AOV_DATA = [
 export default function CheckoutStudio({ managedMode, onModeChange }) {
   const [activeTab, setActiveTab] = useState('payment-methods');
   const [activeRegion, setActiveRegion] = useState('Europe');
-  const [metricView, setMetricView] = useState('last-4-weeks');
+  const [selectedMetric, setSelectedMetric] = useState('conversion');
+  const [hoveredDay, setHoveredDay] = useState(null);
   const basePath = useBasePath();
   const navigate = useNavigate();
 
@@ -234,122 +246,212 @@ export default function CheckoutStudio({ managedMode, onModeChange }) {
               ))}
             </div>
 
-            <div className="flex items-center justify-between mb-4">
+            {/* Key metrics heading + filters inline */}
+            <div className="flex items-center gap-3 mb-4">
               <h2 className="text-label-large-emphasized">Key metrics</h2>
               <div className="flex items-center gap-2">
-                <select
-                  value={metricView}
-                  onChange={(e) => setMetricView(e.target.value)}
-                  className="text-body-small border border-border rounded-md px-2 py-1 bg-surface"
-                >
-                  <option value="last-4-weeks">Last 4 weeks</option>
-                  <option value="weekly">Weekly</option>
-                  <option value="monthly">Monthly</option>
+                <select className="text-[12px] border border-border rounded-md px-2 py-0.5 bg-surface text-subdued">
+                  <option>Last 4 weeks</option>
+                  <option>Weekly</option>
+                  <option>Monthly</option>
                 </select>
-                <select className="text-body-small border border-border rounded-md px-2 py-1 bg-surface">
-                  <option>Compared to</option>
+                <span className="text-[12px] text-subdued">Compared to</span>
+                <select className="text-[12px] border border-border rounded-md px-2 py-0.5 bg-surface text-subdued">
+                  <option>Previous period</option>
                 </select>
-                <select className="text-body-small border border-border rounded-md px-2 py-1 bg-surface">
-                  <option>Previous period ▾</option>
-                </select>
+                <span className="text-[12px] text-subdued">Apr 1 - May 1</span>
               </div>
             </div>
 
             {/* Metric cards */}
             <div className="grid grid-cols-3 gap-4 mb-6">
-              <div className="border border-border rounded-lg p-4">
-                <div className="flex items-center gap-2 mb-1">
-                  <div className="w-3 h-0.5 bg-[#675dff]" />
-                  <span className="text-body-small text-subdued">Conversion rate</span>
-                </div>
-                <div className="flex items-baseline gap-2">
-                  <span className="text-heading-medium">{KEY_METRICS_DATA.conversion.value}</span>
-                  <span className="text-body-small text-[#1ea672]">{KEY_METRICS_DATA.conversion.change}</span>
-                </div>
-              </div>
-              <div className="border border-border rounded-lg p-4">
-                <div className="flex items-center gap-2 mb-1">
-                  <div className="w-3 h-0.5 bg-[#00b4d8]" />
-                  <span className="text-body-small text-subdued">Payment volume</span>
-                </div>
-                <div className="flex items-baseline gap-2">
-                  <span className="text-heading-medium">{KEY_METRICS_DATA.paymentVolume.value}</span>
-                  <span className="text-body-small text-[#1ea672]">{KEY_METRICS_DATA.paymentVolume.change}</span>
-                </div>
-              </div>
-              <div className="border border-border rounded-lg p-4">
-                <div className="flex items-center gap-2 mb-1">
-                  <div className="w-3 h-0.5 bg-[#2ec4b6]" />
-                  <span className="text-body-small text-subdued">Fees saved</span>
-                </div>
-                <div className="flex items-baseline gap-2">
-                  <span className="text-heading-medium">{KEY_METRICS_DATA.feesSaved.value}</span>
-                  <span className="text-body-small text-[#1ea672]">{KEY_METRICS_DATA.feesSaved.change}</span>
-                </div>
-              </div>
+              {KEY_METRICS.map(metric => (
+                <button
+                  key={metric.id}
+                  onClick={() => setSelectedMetric(metric.id)}
+                  className={`text-left rounded-lg p-4 transition-colors ${
+                    selectedMetric === metric.id
+                      ? 'border-2 border-[#675dff] bg-surface'
+                      : 'border border-border bg-surface'
+                  }`}
+                >
+                  <div className="flex items-center gap-1 mb-1">
+                    <span className="text-body-small text-subdued">{metric.label}</span>
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" className="text-subdued"><circle cx="6" cy="6" r="5" stroke="currentColor" strokeWidth="1"/><path d="M6 5.5v2.5M6 3.5h.01" stroke="currentColor" strokeWidth="1" strokeLinecap="round"/></svg>
+                  </div>
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-heading-medium">{metric.value}</span>
+                    <span className={`text-body-small ${metric.positive ? 'text-[#1ea672]' : 'text-[#df1b41]'}`}>{metric.change}</span>
+                  </div>
+                </button>
+              ))}
             </div>
 
-            {/* Chart with before/after */}
-            <div className="border border-border rounded-xl p-5">
-              <div className="flex items-center gap-4 mb-4">
-                <div className="flex items-center gap-1.5">
-                  <div className="w-3 h-0.5 bg-[#675dff]" />
-                  <span className="text-body-small text-subdued">Conversion rate</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <div className="w-3 h-0.5 bg-[#00b4d8]" />
-                  <span className="text-body-small text-subdued">Auth without optimization</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <div className="w-3 h-0.5 bg-[#2ec4b6]" />
-                  <span className="text-body-small text-subdued">Payment method optimization</span>
-                </div>
+            {/* Chart */}
+            <div className="relative">
+              {/* Y axis labels */}
+              <div className="absolute left-0 top-0 bottom-[32px] w-8 flex flex-col justify-between text-[10px] text-subdued pointer-events-none">
+                <span>100%</span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span>0%</span>
               </div>
-              <div className="relative h-[200px] w-full">
-                {/* Y axis */}
-                <div className="absolute left-0 top-0 bottom-0 w-8 flex flex-col justify-between text-[10px] text-subdued">
-                  <span>80%</span>
-                  <span>70%</span>
-                  <span>60%</span>
-                  <span>50%</span>
-                </div>
-                {/* Chart area */}
-                <div className="ml-10 h-full relative">
-                  <svg className="w-full h-full" viewBox="0 0 600 200" preserveAspectRatio="none">
-                    {/* Grid lines */}
-                    <line x1="0" y1="50" x2="600" y2="50" stroke="currentColor" strokeOpacity="0.1" />
-                    <line x1="0" y1="100" x2="600" y2="100" stroke="currentColor" strokeOpacity="0.1" />
-                    <line x1="0" y1="150" x2="600" y2="150" stroke="currentColor" strokeOpacity="0.1" />
 
-                    {/* Before line (blue/purple) */}
-                    <polyline
-                      fill="none"
-                      stroke="#675dff"
+              {/* Y axis right */}
+              <div className="absolute right-0 top-0 bottom-[32px] w-4 flex flex-col justify-between text-[10px] text-subdued pointer-events-none">
+                <span>Y</span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span>Y</span>
+              </div>
+
+              {/* Chart area */}
+              <div className="ml-10 mr-6 relative" style={{ height: 240 }}>
+                <svg
+                  className="w-full h-full"
+                  viewBox="0 0 580 200"
+                  preserveAspectRatio="none"
+                  onMouseLeave={() => setHoveredDay(null)}
+                >
+                  {/* Grid lines */}
+                  <line x1="0" y1="0" x2="580" y2="0" stroke="currentColor" strokeOpacity="0.05" />
+                  <line x1="0" y1="50" x2="580" y2="50" stroke="currentColor" strokeOpacity="0.05" />
+                  <line x1="0" y1="100" x2="580" y2="100" stroke="currentColor" strokeOpacity="0.05" />
+                  <line x1="0" y1="150" x2="580" y2="150" stroke="currentColor" strokeOpacity="0.05" />
+                  <line x1="0" y1="200" x2="580" y2="200" stroke="currentColor" strokeOpacity="0.05" />
+
+                  {/* Rate without optimization (grey dashed) */}
+                  <polyline
+                    fill="none"
+                    stroke="#c4c4c4"
+                    strokeWidth="1.5"
+                    strokeDasharray="4 3"
+                    points={CHART_DAYS.map((d, i) => `${(i / 29) * 580},${200 - d.withoutOptimization * 2}`).join(' ')}
+                  />
+
+                  {/* Conversion rate (purple solid) */}
+                  <polyline
+                    fill="none"
+                    stroke="#675dff"
+                    strokeWidth="2"
+                    points={CHART_DAYS.map((d, i) => `${(i / 29) * 580},${200 - d.conversion * 2}`).join(' ')}
+                  />
+
+                  {/* Hover dot on conversion line */}
+                  {hoveredDay !== null && (
+                    <circle
+                      cx={(hoveredDay / 29) * 580}
+                      cy={200 - CHART_DAYS[hoveredDay].conversion * 2}
+                      r="4"
+                      fill="#675dff"
+                      stroke="white"
                       strokeWidth="2"
-                      points={CHART_DATA.map((d, i) => `${i * 20},${200 - (d.before - 50) * 6.67}`).join(' ')}
                     />
+                  )}
 
-                    {/* After line (cyan) - only after day 15 */}
-                    <polyline
-                      fill="none"
-                      stroke="#00b4d8"
-                      strokeWidth="2"
-                      points={CHART_DATA.filter(d => d.after !== null).map((d, i) => `${(i + 15) * 20},${200 - (d.after - 50) * 6.67}`).join(' ')}
+                  {/* PM enabled markers */}
+                  {CHART_DAYS.map((d, i) => d.pmEnabled ? (
+                    <g key={i}>
+                      <circle cx={(i / 29) * 580} cy="196" r="5" fill="#e0d9fb" stroke="#675dff" strokeWidth="1" />
+                      <text x={(i / 29) * 580} y="199" textAnchor="middle" fontSize="6" fill="#675dff">⚡</text>
+                    </g>
+                  ) : null)}
+
+                  {/* Hover dashed vertical line */}
+                  {hoveredDay !== null && (
+                    <line
+                      x1={(hoveredDay / 29) * 580}
+                      y1="0"
+                      x2={(hoveredDay / 29) * 580}
+                      y2="200"
+                      stroke="#c4c4c4"
+                      strokeWidth="1"
+                      strokeDasharray="3 2"
                     />
+                  )}
 
-                    {/* Annotation line for "payment method turned on" */}
-                    <line x1="300" y1="0" x2="300" y2="200" stroke="#675dff" strokeWidth="1" strokeDasharray="4 2" />
-                  </svg>
+                  {/* Invisible hover rects for each day */}
+                  {CHART_DAYS.map((_, i) => (
+                    <rect
+                      key={i}
+                      x={(i / 29) * 580 - 10}
+                      y="0"
+                      width="20"
+                      height="200"
+                      fill="transparent"
+                      onMouseEnter={() => setHoveredDay(i)}
+                    />
+                  ))}
+                </svg>
 
-                  {/* Annotation tooltip */}
-                  <div className="absolute top-2 right-[35%] bg-[#1a1a2e] text-white px-3 py-2 rounded-lg text-[11px] shadow-lg">
-                    <div className="text-subdued text-[10px]">Apr 15 - PM turned on</div>
-                    <div className="flex items-center gap-3 mt-1">
-                      <div>
-                        <span className="text-[#2ec4b6]">●</span> After: <span className="font-medium">71.4%</span>
+                {/* Tooltip */}
+                {hoveredDay !== null && (
+                  <div
+                    className="absolute z-10 bg-surface border border-border rounded-lg shadow-lg px-3 py-2.5 pointer-events-none"
+                    style={{
+                      left: `${Math.min(Math.max((hoveredDay / 29) * 100, 15), 75)}%`,
+                      top: '20px',
+                      transform: 'translateX(-50%)',
+                      minWidth: 200,
+                    }}
+                  >
+                    <div className="text-label-small-emphasized">{CHART_DAYS[hoveredDay].label} <span className="text-subdued font-normal">2025</span></div>
+                    <div className="mt-1.5 space-y-1">
+                      <div className="flex items-center justify-between gap-4">
+                        <div className="flex items-center gap-1.5">
+                          <span className="w-2 h-2 rounded-sm bg-[#675dff]" />
+                          <span className="text-body-small">Conversion rate</span>
+                        </div>
+                        <span className="text-body-small font-medium">{CHART_DAYS[hoveredDay].conversion.toFixed(1)}%</span>
                       </div>
+                      <div className="flex items-center justify-between gap-4">
+                        <div className="flex items-center gap-1.5">
+                          <span className="w-2 h-2 rounded-sm bg-[#e0e0e0]" />
+                          <span className="text-body-small">Rate without optimisation</span>
+                        </div>
+                        <span className="text-body-small font-medium">{CHART_DAYS[hoveredDay].withoutOptimization.toFixed(1)}%</span>
+                      </div>
+                      {CHART_DAYS[hoveredDay].pmEnabled && (
+                        <div className="flex items-center gap-1.5">
+                          <span className="w-2 h-2 rounded-sm bg-[#e0d9fb]" />
+                          <span className="text-body-small">{CHART_DAYS[hoveredDay].pmEnabled} enabled</span>
+                        </div>
+                      )}
                     </div>
+                    {CHART_DAYS[hoveredDay].pmEnabled && (
+                      <div className="mt-2 pt-2 border-t border-border flex items-start gap-1.5">
+                        <span className="text-[#1ea672] mt-0.5">✦</span>
+                        <span className="text-body-small text-subdued">Your conversion rate saw a <span className="font-medium text-default">41.31%</span> increase with optimisation.</span>
+                      </div>
+                    )}
                   </div>
+                )}
+              </div>
+
+              {/* X axis labels */}
+              <div className="ml-10 mr-6 flex justify-between text-[10px] text-subdued mt-1">
+                <span>Apr 1</span>
+                <span>Apr</span>
+                <span>Apr</span>
+                <span>Apr</span>
+                <span>May 1</span>
+              </div>
+
+              {/* Legend */}
+              <div className="ml-10 flex items-center gap-4 mt-3">
+                <div className="flex items-center gap-1.5">
+                  <div className="w-4 h-[2px] bg-[#675dff]" />
+                  <span className="text-[11px] text-subdued">Conversion rate</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <div className="w-4 h-[2px] bg-[#c4c4c4]" style={{ backgroundImage: 'repeating-linear-gradient(90deg, #c4c4c4 0, #c4c4c4 4px, transparent 4px, transparent 7px)' }} />
+                  <span className="text-[11px] text-subdued">Rate without optimisation</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span className="w-3 h-3 rounded-full bg-[#e0d9fb] border border-[#675dff]" />
+                  <span className="text-[11px] text-subdued">Payment method optimization</span>
                 </div>
               </div>
             </div>
