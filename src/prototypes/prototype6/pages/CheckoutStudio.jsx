@@ -217,21 +217,26 @@ export default function CheckoutStudio({ managedMode, onModeChange }) {
 
           {/* Section 2: Key Metrics with Regional Split */}
           <section>
-            {/* Region tabs */}
-            <div className="flex items-center gap-0 border-b border-border mb-6">
-              {REGION_TABS.map(region => (
-                <button
-                  key={region}
-                  onClick={() => setActiveRegion(region)}
-                  className={`px-4 py-2.5 text-label-small whitespace-nowrap border-b-2 transition-colors ${
-                    activeRegion === region
-                      ? 'border-[#675dff] text-default'
-                      : 'border-transparent text-subdued hover:text-default'
-                  }`}
-                >
-                  {region}
-                </button>
-              ))}
+            {/* Region filters */}
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-2">
+                {REGION_TABS.map(region => (
+                  <button
+                    key={region}
+                    onClick={() => setActiveRegion(region)}
+                    className={`px-3 py-1.5 text-label-small whitespace-nowrap rounded-md transition-colors ${
+                      activeRegion === region
+                        ? 'border border-default text-default bg-surface'
+                        : 'border border-transparent text-subdued hover:text-default'
+                    }`}
+                  >
+                    {region}
+                  </button>
+                ))}
+              </div>
+              <button className="flex items-center gap-1.5 px-3 py-1.5 text-label-small text-subdued rounded-md border border-border hover:bg-offset">
+                <span>+</span> Add filter
+              </button>
             </div>
 
             <div className="flex items-center justify-between mb-4">
