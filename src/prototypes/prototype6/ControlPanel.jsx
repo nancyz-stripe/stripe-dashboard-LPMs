@@ -37,17 +37,19 @@ export default function ControlPanel({ managedMode, onModeChange }) {
           onToggle={() => { if (!didDrag.current) setMinimized(!minimized); }}
         />
         <ControlPanelBody minimized={minimized}>
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2 w-full">
             <span className="text-label-small text-subdued">Mode</span>
             <button
               onClick={() => onModeChange('for-me')}
-              className={`w-full px-3 py-2 rounded-md text-label-medium text-left transition-colors border ${managedMode === 'for-me' ? 'bg-button-primary-bg text-button-primary-text border-button-primary-border' : 'bg-surface text-default border-border hover:bg-offset'}`}
+              className={`w-full px-3 py-2 rounded-md text-label-medium text-left transition-colors border ${managedMode === 'for-me' ? 'border-brand-200 text-default' : 'bg-surface text-default border-border hover:bg-offset'}`}
+              style={managedMode === 'for-me' ? { backgroundColor: '#C3B6FB' } : undefined}
             >
               Do it for me
             </button>
             <button
               onClick={() => onModeChange('with-me')}
-              className={`w-full px-3 py-2 rounded-md text-label-medium text-left transition-colors border ${managedMode === 'with-me' ? 'bg-button-primary-bg text-button-primary-text border-button-primary-border' : 'bg-surface text-default border-border hover:bg-offset'}`}
+              className={`w-full px-3 py-2 rounded-md text-label-medium text-left transition-colors border ${managedMode === 'with-me' ? 'border-brand-200 text-default' : 'bg-surface text-default border-border hover:bg-offset'}`}
+              style={managedMode === 'with-me' ? { backgroundColor: '#C3B6FB' } : undefined}
             >
               Do it with me
             </button>
