@@ -47,16 +47,16 @@ export default function ControlPanel({ managedMode, onModeChange }) {
           <InfoBanner />
           <div className="flex flex-col gap-1">
             <span className="text-label-small text-subdued">Mode</span>
-            <div className="flex rounded-md border border-border overflow-hidden">
+            <div className="grid grid-cols-2 rounded-md border border-border overflow-hidden">
               <button
                 onClick={() => onModeChange('for-me')}
-                className={`flex-1 px-3 py-1.5 text-label-small transition-colors ${managedMode === 'for-me' ? 'bg-blurple text-white' : 'bg-surface text-default hover:bg-offset'}`}
+                className={`whitespace-nowrap px-2 py-1.5 text-label-small transition-colors ${managedMode === 'for-me' ? 'bg-blurple text-white' : 'bg-surface text-default hover:bg-offset'}`}
               >
                 Do it for me
               </button>
               <button
                 onClick={() => onModeChange('with-me')}
-                className={`flex-1 px-3 py-1.5 text-label-small transition-colors ${managedMode === 'with-me' ? 'bg-blurple text-white' : 'bg-surface text-default hover:bg-offset'}`}
+                className={`whitespace-nowrap px-2 py-1.5 text-label-small transition-colors border-l border-border ${managedMode === 'with-me' ? 'bg-blurple text-white' : 'bg-surface text-default hover:bg-offset'}`}
               >
                 Do it with me
               </button>
