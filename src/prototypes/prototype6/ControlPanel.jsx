@@ -50,13 +50,13 @@ export default function ControlPanel({ managedMode, onModeChange }) {
             <div className="grid grid-cols-2 rounded-md border border-border overflow-hidden">
               <button
                 onClick={() => onModeChange('for-me')}
-                className={`whitespace-nowrap px-2 py-1.5 text-label-small transition-colors ${managedMode === 'for-me' ? 'bg-blurple text-white' : 'bg-surface text-default hover:bg-offset'}`}
+                className={`whitespace-nowrap px-2 py-1.5 text-label-small transition-colors ${managedMode === 'for-me' ? 'bg-button-primary-bg text-button-primary-text' : 'bg-surface text-default hover:bg-offset'}`}
               >
                 Do it for me
               </button>
               <button
                 onClick={() => onModeChange('with-me')}
-                className={`whitespace-nowrap px-2 py-1.5 text-label-small transition-colors border-l border-border ${managedMode === 'with-me' ? 'bg-blurple text-white' : 'bg-surface text-default hover:bg-offset'}`}
+                className={`whitespace-nowrap px-2 py-1.5 text-label-small transition-colors border-l border-border ${managedMode === 'with-me' ? 'bg-button-primary-bg text-button-primary-text' : 'bg-surface text-default hover:bg-offset'}`}
               >
                 Do it with me
               </button>
