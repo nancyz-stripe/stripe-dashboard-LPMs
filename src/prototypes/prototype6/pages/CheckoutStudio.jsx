@@ -9,16 +9,16 @@ const HIGHLIGHTS = [
     title: 'Conversion',
     description: 'Your overall conversion increased significantly the past week.',
     value: '67.8%',
-    change: '+4.3%',
+    change: '+3.4%',
     cta: 'View details',
   },
   {
     title: 'Top markets this week',
     description: 'Weekly top performing markets.',
     markets: [
-      { flag: '🇩🇪', code: 'DE', volume: '$124.0k', change: '+12%' },
-      { flag: '🇫🇷', code: 'FR', volume: '$110.2k', change: '+8%' },
-      { flag: '🇪🇸', code: 'ES', volume: '$74.0k', change: '+15%' },
+      { flag: '🇪🇸', name: 'Spain', volume: '$234.2k', change: '+3.4%' },
+      { flag: '🇪🇸', name: 'Spain', volume: '$234.2k', change: '+3.4%' },
+      { flag: '🇪🇸', name: 'Spain', volume: '$234.2k', change: '+3.4%' },
     ],
     cta: 'View details',
   },
@@ -26,16 +26,16 @@ const HIGHLIGHTS = [
     title: 'Bizum performance',
     description: 'Since enabling Bizum, your conversion in Spain increased.',
     stats: [
-      { label: 'Conversion', value: 'N/A', change: '+6.2%' },
-      { label: 'Vol', value: '$62,345', change: '+24%' },
+      { label: 'Conversion', value: '74%', change: '+9.4%' },
+      { label: 'AOV', value: '$234.2k', change: '+3.4%' },
     ],
     cta: 'View details',
   },
   {
     title: 'New payment methods',
     description: '3 new payment methods were enabled.',
-    badges: ['Scalapay', 'Bancontact', 'Apple Pay'],
-    cta: 'View all changes',
+    badges: ['DemoPay', 'DemoPayment', 'DemoWallet'],
+    cta: 'View performance',
   },
 ];
 
@@ -86,7 +86,7 @@ export default function CheckoutStudio({ managedMode, onModeChange }) {
       <div>
         <div className="mb-6">
           <h1 className="text-display-small">Checkout</h1>
-          <div className="flex items-center gap-0 mt-4 border-b border-border -mx-5 md:-mx-8 px-5 md:px-8">
+          <div className="flex items-center gap-0 mt-4 border-b border-border">
             {tabs.map(tab => {
               const tabId = tab.toLowerCase().replace(/\s+/g, '-');
               return (
@@ -117,7 +117,7 @@ export default function CheckoutStudio({ managedMode, onModeChange }) {
       {/* Page header */}
       <div className="mb-6">
         <h1 className="text-display-small">Checkout</h1>
-        <div className="flex items-center gap-0 mt-4 border-b border-border -mx-5 md:-mx-8 px-5 md:px-8">
+        <div className="flex items-center gap-0 mt-4 border-b border-border">
           {tabs.map(tab => {
             const tabId = tab.toLowerCase().replace(/\s+/g, '-');
             return (
@@ -140,24 +140,24 @@ export default function CheckoutStudio({ managedMode, onModeChange }) {
       {activeTab === 'payment-methods' && (
         <div className="space-y-8">
           {/* Section 1: Smart Briefing */}
-          <section className="border border-border rounded-xl p-6">
+          <section className="bg-offset rounded-xl p-6">
             <div className="flex items-start justify-between mb-1">
               <div>
                 <div className="flex items-center gap-2">
                   <h2 className="text-label-large-emphasized">Dynamic payment methods</h2>
-                  <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-[#e0d9fb] text-[#533afd]">Managed by Stripe</span>
+                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium border border-[#1ea672] text-[#1ea672]">Optimized by Stripe</span>
                 </div>
                 <p className="text-body-small text-subdued mt-1">Stripe dynamically shows the right payment methods for your customers to optimize conversion.</p>
               </div>
-              <button className="p-1.5 rounded hover:bg-offset">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="4" r="1.5" fill="currentColor"/><circle cx="10" cy="10" r="1.5" fill="currentColor"/><circle cx="10" cy="16" r="1.5" fill="currentColor"/></svg>
+              <button className="w-8 h-8 flex items-center justify-center rounded-md border border-border bg-surface hover:bg-offset">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="3" cy="8" r="1.2" fill="currentColor"/><circle cx="8" cy="8" r="1.2" fill="currentColor"/><circle cx="13" cy="8" r="1.2" fill="currentColor"/></svg>
               </button>
             </div>
 
             {/* Highlight cards */}
             <div className="grid grid-cols-4 gap-3 mt-5">
               {HIGHLIGHTS.map((h, i) => (
-                <div key={i} className="border border-border rounded-lg p-4 flex flex-col justify-between min-h-[200px]">
+                <div key={i} className="bg-surface border border-border rounded-lg p-4 flex flex-col justify-between min-h-[200px]">
                   <div>
                     <h3 className="text-label-medium-emphasized">{h.title}</h3>
                     <p className="text-body-small text-subdued mt-1">{h.description}</p>
@@ -175,10 +175,10 @@ export default function CheckoutStudio({ managedMode, onModeChange }) {
                           <div key={j} className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
                               <span className="text-body-small">{m.flag}</span>
-                              <span className="text-body-small text-subdued">{m.code}</span>
+                              <span className="text-body-small">{m.name}</span>
                             </div>
-                            <div className="flex items-center gap-2">
-                              <span className="text-body-small">{m.volume}</span>
+                            <div className="flex items-center gap-3">
+                              <span className="text-body-small font-medium">{m.volume}</span>
                               <span className="text-body-small text-[#1ea672]">{m.change}</span>
                             </div>
                           </div>
