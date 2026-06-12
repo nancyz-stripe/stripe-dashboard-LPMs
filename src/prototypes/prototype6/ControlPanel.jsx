@@ -41,15 +41,15 @@ export default function ControlPanel({ managedMode, onModeChange }) {
             <span className="text-label-small text-subdued">Mode</span>
             <button
               onClick={() => onModeChange('for-me')}
-              className={`w-full px-3 py-2 rounded-md text-label-medium text-left transition-colors border ${managedMode === 'for-me' ? 'border-brand-200 text-default' : 'bg-surface text-default border-border hover:bg-offset'}`}
-              style={managedMode === 'for-me' ? { backgroundColor: '#C3B6FB' } : undefined}
+              className={`w-full px-3 py-2 rounded-md text-label-medium text-center transition-colors border ${managedMode === 'for-me' ? 'border-brand-200 text-default' : 'bg-surface text-default border-border hover:bg-offset'}`}
+              style={managedMode === 'for-me' ? { backgroundColor: '#E0D9FB' } : undefined}
             >
               Do it for me
             </button>
             <button
               onClick={() => onModeChange('with-me')}
-              className={`w-full px-3 py-2 rounded-md text-label-medium text-left transition-colors border ${managedMode === 'with-me' ? 'border-brand-200 text-default' : 'bg-surface text-default border-border hover:bg-offset'}`}
-              style={managedMode === 'with-me' ? { backgroundColor: '#C3B6FB' } : undefined}
+              className={`w-full px-3 py-2 rounded-md text-label-medium text-center transition-colors border ${managedMode === 'with-me' ? 'border-brand-200 text-default' : 'bg-surface text-default border-border hover:bg-offset'}`}
+              style={managedMode === 'with-me' ? { backgroundColor: '#E0D9FB' } : undefined}
             >
               Do it with me
             </button>
