@@ -145,7 +145,7 @@ export default function CheckoutStudio({ managedMode, onModeChange }) {
               <div>
                 <div className="flex items-center gap-2">
                   <h2 className="text-label-large-emphasized">Dynamic payment methods</h2>
-                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium border border-[#1ea672] text-[#1ea672]">Optimized by Stripe</span>
+                  <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-[#e0d9fb] text-[#533afd]">Optimized by Stripe</span>
                 </div>
                 <p className="text-body-small text-subdued mt-1">Stripe dynamically shows the right payment methods for your customers to optimize conversion.</p>
               </div>
