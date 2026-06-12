@@ -15,7 +15,7 @@ export default function Prototype6App({ basePath = '' }) {
   const [darkMode, setDarkMode] = useState(false);
   const [sandboxMode, setSandboxMode] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [managedMode, setManagedMode] = useState(true);
+  const [managedMode, setManagedMode] = useState('for-me');
   const [highlightedMethod, setHighlightedMethod] = useState(null);
 
   useEffect(() => {
@@ -27,12 +27,8 @@ export default function Prototype6App({ basePath = '' }) {
     <BasePathContext.Provider value={basePath}>
       <div className="min-h-screen bg-surface">
         <ControlPanel
-          darkMode={darkMode}
-          onToggleDarkMode={() => setDarkMode(!darkMode)}
-          sandboxMode={sandboxMode}
-          onToggleSandboxMode={() => setSandboxMode(!sandboxMode)}
           managedMode={managedMode}
-          onToggleManagedMode={() => setManagedMode(!managedMode)}
+          onModeChange={setManagedMode}
         />
 
         <div className="flex flex-col min-h-screen">

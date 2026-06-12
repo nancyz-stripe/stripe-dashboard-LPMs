@@ -11,9 +11,8 @@ import {
   InfoBanner,
   ContextDialog,
 } from '../../sail/ControlPanel';
-import { Switch } from '../../sail';
 
-export default function ControlPanel({ darkMode, onToggleDarkMode, sandboxMode, onToggleSandboxMode, managedMode, onToggleManagedMode }) {
+export default function ControlPanel({ managedMode, onModeChange }) {
   const navigate = useNavigate();
   const [minimized, setMinimized] = useState(false);
   const [contextOpen, setContextOpen] = useState(false);
@@ -46,24 +45,23 @@ export default function ControlPanel({ darkMode, onToggleDarkMode, sandboxMode, 
         />
         <ControlPanelBody minimized={minimized}>
           <InfoBanner />
-          <Switch
-            checked={darkMode}
-            onChange={onToggleDarkMode}
-            label="Dark mode"
-            className="w-full"
-          />
-          <Switch
-            checked={sandboxMode}
-            onChange={onToggleSandboxMode}
-            label="Sandbox mode"
-            className="w-full"
-          />
-          <Switch
-            checked={managedMode}
-            onChange={onToggleManagedMode}
-            label="Stripe-managed mode"
-            className="w-full"
-          />
+          <div className="flex flex-col gap-1">
+            <span className="text-label-small text-subdued">Mode</span>
+            <div className="flex rounded-md border border-border overflow-hidden">
+              <button
+                onClick={() => onModeChange('for-me')}
+                className={`flex-1 px-3 py-1.5 text-label-small transition-colors ${managedMode === 'for-me' ? 'bg-blurple text-white' : 'bg-surface text-default hover:bg-offset'}`}
+              >
+                Do it for me
+              </button>
+              <button
+                onClick={() => onModeChange('with-me')}
+                className={`flex-1 px-3 py-1.5 text-label-small transition-colors ${managedMode === 'with-me' ? 'bg-blurple text-white' : 'bg-surface text-default hover:bg-offset'}`}
+              >
+                Do it with me
+              </button>
+            </div>
+          </div>
           <ControlPanelButton onClick={() => setContextOpen(true)}>
             Show context
           </ControlPanelButton>
