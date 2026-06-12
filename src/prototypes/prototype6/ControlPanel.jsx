@@ -1,21 +1,14 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import {
-  ControlPanelButton,
   ControlPanelHeader,
   ControlPanelBody,
-  MARGIN,
   PANEL_WIDTH,
   DropZone,
   useDragSnap,
-  InfoBanner,
-  ContextDialog,
 } from '../../sail/ControlPanel';
 
 export default function ControlPanel({ managedMode, onModeChange }) {
-  const navigate = useNavigate();
   const [minimized, setMinimized] = useState(false);
-  const [contextOpen, setContextOpen] = useState(false);
   const { side, dragging, settling, settlePos, dragPos, snapTarget, panelRef, onPointerDown, didDrag, restLeft, bottomOffset, bottomExpr } = useDragSnap();
 
   let style;
@@ -44,36 +37,24 @@ export default function ControlPanel({ managedMode, onModeChange }) {
           onToggle={() => { if (!didDrag.current) setMinimized(!minimized); }}
         />
         <ControlPanelBody minimized={minimized}>
-          <InfoBanner />
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-2">
             <span className="text-label-small text-subdued">Mode</span>
-            <div className="grid grid-cols-2 rounded-md border border-border overflow-hidden">
-              <button
-                onClick={() => onModeChange('for-me')}
-                className={`whitespace-nowrap px-2 py-1.5 text-label-small transition-colors ${managedMode === 'for-me' ? 'bg-button-primary-bg text-button-primary-text' : 'bg-surface text-default hover:bg-offset'}`}
-              >
-                Do it for me
-              </button>
-              <button
-                onClick={() => onModeChange('with-me')}
-                className={`whitespace-nowrap px-2 py-1.5 text-label-small transition-colors border-l border-border ${managedMode === 'with-me' ? 'bg-button-primary-bg text-button-primary-text' : 'bg-surface text-default hover:bg-offset'}`}
-              >
-                Do it with me
-              </button>
-            </div>
+            <button
+              onClick={() => onModeChange('for-me')}
+              className={`w-full px-3 py-2 rounded-md text-label-medium text-left transition-colors border ${managedMode === 'for-me' ? 'bg-button-primary-bg text-button-primary-text border-button-primary-border' : 'bg-surface text-default border-border hover:bg-offset'}`}
+            >
+              Do it for me
+            </button>
+            <button
+              onClick={() => onModeChange('with-me')}
+              className={`w-full px-3 py-2 rounded-md text-label-medium text-left transition-colors border ${managedMode === 'with-me' ? 'bg-button-primary-bg text-button-primary-text border-button-primary-border' : 'bg-surface text-default border-border hover:bg-offset'}`}
+            >
+              Do it with me
+            </button>
           </div>
-          <ControlPanelButton onClick={() => setContextOpen(true)}>
-            Show context
-          </ControlPanelButton>
-          <ControlPanelButton onClick={() => navigate('/')}>
-            View all prototypes
-          </ControlPanelButton>
         </ControlPanelBody>
       </div>
 
-      <ContextDialog open={contextOpen} onClose={() => setContextOpen(false)}>
-        {/* Add your prototype context here */}
-      </ContextDialog>
     </>
   );
 }
